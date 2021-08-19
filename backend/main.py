@@ -20,15 +20,10 @@ def start_application():
     print(settings.POSTGRES_DB)
     app = FastAPI(title=settings.PROJECT_TITLE, version=settings.PROJECT_VERSION)
     # app.add_middleware(HTTPSRedirectMiddleware)
-    # app.add_middleware(TrustedHostMiddleware, allowed_hosts=["baza-mrowino.pl", "*.baza-mrowino.pl", "localhost"])
+    # app.add_middleware(TrustedHostMiddleware, allowed_hosts=["host.pl"])
     create_tables()
     include_router(app)
     return app
 
 
 app = start_application()
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}

@@ -5,7 +5,7 @@ load_dotenv()
 
 
 class Settings:
-    PROJECT_TITLE: str = "BAZA-API"
+    PROJECT_TITLE: str = "PIS-API"
     PROJECT_VERSION: str = "0.1.1"
     POSTGRES_USER: str = os.getenv("POSTGRES_USER")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
