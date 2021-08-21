@@ -36,21 +36,25 @@ def retrieve_users_by_login(user_login: str, db: Session) -> List[User]:
     return db.query(User).filter(User.login == user_login).all()
 
 
-# TODO write Unit Tests + validation
-def set_superuser(user_id: int, db: Session):
-    db.query(User).filter(User.id == user_id).update({User.superuser: True})
+def set_superuser(user_id: int, db: Session) -> bool:
+    return db.query(User).filter(User.id == user_id).update({User.superuser: True})
 
 
-# TODO write Unit Tests + validation
-def set_administrator(user_id: int, db: Session):
-    db.query(User).filter(User.id == user_id).update({User.administrator: True})
+def unset_superuser(user_id: int, db: Session) -> bool:
+    return db.query(User).filter(User.id == user_id).update({User.superuser: False})
 
 
-# TODO write Unit Tests + validation
-def set_inactive(user_id: int, db: Session):
-    db.query(User).filter(User.id == user_id).update({User.is_active: False})
+def set_administrator(user_id: int, db: Session) -> bool:
+    return db.query(User).filter(User.id == user_id).update({User.administrator: True})
 
 
-# TODO write Unit Tests + validation
-def set_active(user_id: int, db: Session):
-    db.query(User).filter(User.id == user_id).update({User.is_active: True})
+def unset_administrator(user_id: int, db: Session) -> bool:
+    return db.query(User).filter(User.id == user_id).update({User.administrator: False})
+
+
+def set_active(user_id: int, db: Session) -> bool:
+    return db.query(User).filter(User.id == user_id).update({User.is_active: True})
+
+
+def set_inactive(user_id: int, db: Session) -> bool:
+    return db.query(User).filter(User.id == user_id).update({User.is_active: False})
