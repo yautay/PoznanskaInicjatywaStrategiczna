@@ -30,3 +30,6 @@ python-jose>=3.3.0
 
 # for form data
 python-multipart>=0.0.5
+
+# migrations
+alembic>=1.6.5

@@ -6,7 +6,7 @@ load_dotenv()
 
 class Settings:
     PROJECT_TITLE: str = os.getenv("PROJECT_TITLE")
-    PROJECT_VERSION: str = "0.2.0"
+    PROJECT_VERSION: str = "0.2.7"
     POSTGRES_USER: str = os.getenv("POSTGRES_USER")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER")
