@@ -5,16 +5,17 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from db.base import Base
 from db.session import get_db
 from apis.base import api_router
+from core.config import settings
+from tests.utils.authenticate import authentication_token_from_email
 
 import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-#this is to include backend dir in sys.path so that we can import from db,main.py
 
 
 def start_application():
@@ -36,7 +37,7 @@ def app() -> Generator[FastAPI, Any, None]:
     """
     Create a fresh database on each test case.
     """
-    Base.metadata.create_all(engine)  # Create the tables.
+    Base.metadata.create_all(engine)
     _app = start_application()
     yield _app
     Base.metadata.drop_all(engine)
@@ -47,7 +48,7 @@ def db_session(app: FastAPI) -> Generator[SessionTesting, Any, None]:
     connection = engine.connect()
     transaction = connection.begin()
     session = SessionTesting(bind=connection)
-    yield session  # use the session in tests.
+    yield session
     session.close()
     transaction.rollback()
     connection.close()
@@ -69,3 +70,8 @@ def client(app: FastAPI, db_session: SessionTesting) -> Generator[TestClient, An
     app.dependency_overrides[get_db] = _get_test_db
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture(scope="function")
+def normal_user_token_headers(client: TestClient, db_session: Session):
+    return authentication_token_from_email(client=client, email=settings.TEST_USER_EMAIL, db=db_session)
