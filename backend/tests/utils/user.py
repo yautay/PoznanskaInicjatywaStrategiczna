@@ -7,15 +7,15 @@ from db.repository.users import create_new_user
 from tests.utils.randoms import random_lower_string, random_date
 
 
-def create_test_users(db: Session, count=10) -> List[User]:
+def create_test_users(db: Session, count=10) -> List[List]:
     users = []
     for user in range(count):
         user = create_random_user(db=db)
         _id = user.id
         login = user.login
-        emial = user.email
+        email = user.email
         hashed_password = user.hashed_password
-        users.append([_id, login, emial, hashed_password])
+        users.append([_id, login, email, hashed_password])
     return users
 
 
