@@ -63,7 +63,7 @@ to downgrade migration:
 ### completed
 
 0.1.0 - initial release, architecture  
-0.2.0 - JWT implementation, TTD implementation
+0.2.0 - JWT implementation, TTD implementation  
 0.3.0 - Alembic implementation, Unit Tests, refactor
 
 ### in development 
