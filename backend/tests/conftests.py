@@ -10,7 +10,9 @@ from db.base import Base
 from db.session import get_db
 from apis.base import api_router
 from core.config import settings
-from tests.utils.authenticate import authentication_token_from_email
+from tests.utils.authenticate import \
+    authentication_token_from_email_superuser, \
+    authentication_token_from_email_common_user
 
 import sys
 import os
@@ -73,5 +75,10 @@ def client(app: FastAPI, db_session: SessionTesting) -> Generator[TestClient, An
 
 
 @pytest.fixture(scope="function")
+def super_user_token_headers(client: TestClient, db_session: Session):
+    return authentication_token_from_email_superuser(client=client, email=settings.TEST_USER_EMAIL, db=db_session)
+
+
+@pytest.fixture(scope="function")
 def normal_user_token_headers(client: TestClient, db_session: Session):
-    return authentication_token_from_email(client=client, email=settings.TEST_USER_EMAIL, db=db_session)
+    return authentication_token_from_email_common_user(client=client, email=settings.TEST_USER_EMAIL, db=db_session)

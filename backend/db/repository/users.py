@@ -29,6 +29,10 @@ def retrieve_users(db: Session) -> List[User]:
     return db.query(User).all()
 
 
+def retrieve_users_by_id(user_id: int, db: Session) -> User:
+    return db.query(User).filter(User.id == user_id).first()
+
+
 def retrieve_users_by_email(user_email: str, db: Session) -> List[User]:
     return db.query(User).filter(User.email == user_email).all()
 
