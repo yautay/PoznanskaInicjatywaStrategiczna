@@ -17,6 +17,7 @@ class UserCreate(UserBase):
     login: str
     password: str
     email: EmailStr
+    bgg_user: str
     name: str
     surname: str
     birthdate: date

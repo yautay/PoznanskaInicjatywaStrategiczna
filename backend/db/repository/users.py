@@ -11,6 +11,7 @@ def create_new_user(user: UserCreate, db: Session) -> User:
         login=user.login,
         hashed_password=Hasher.get_password_hash(user.password),
         email=user.email,
+        bgg_user=user.bgg_user,
         name=user.name,
         surname=user.surname,
         birthdate=user.birthdate,

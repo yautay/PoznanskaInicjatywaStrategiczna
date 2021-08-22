@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 from db.base import Base
-from db.models.user import *
-from db.models.article import *
-from db.models.user_collection import *
+from db.models.user import User
+from db.models.article import Article
+from db.models.collection import Collection
 
 # uncomment for PostgreSQL
 # from core.config import settings

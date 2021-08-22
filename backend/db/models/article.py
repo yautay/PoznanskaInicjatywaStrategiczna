@@ -6,7 +6,7 @@ from db.base_class import Base
 
 class Article(Base):
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(250), nullable=False, unique=True)
+    title = Column(String(250), nullable=False)
     content = Column(String(2000), nullable=False)
     picture = Column(String(250), nullable=False)
     is_active = Column(Boolean, default=False, nullable=False)

@@ -14,8 +14,9 @@ def create_test_users(db: Session, count=10) -> List[List]:
         _id = user.id
         login = user.login
         email = user.email
+        bgg_user = user.bgg_user
         hashed_password = user.hashed_password
-        users.append([_id, login, email, hashed_password])
+        users.append([_id, login, email, hashed_password, bgg_user])
     return users
 
 
@@ -46,6 +47,7 @@ def create_random_user(db: Session, data: dict = None) -> User:
         login=data["login"],
         email=data["email"],
         password=data["password"],
+        bgg_user=data["bgg_user"],
         name=data["name"],
         surname=data["surname"],
         birthdate=data["birthdate"])
@@ -58,6 +60,7 @@ def create_random_user_data() -> dict:
         "login": random_lower_string(7),
         "email": f"{random_lower_string(6)}@{random_lower_string(6)}.com",
         "password": random_lower_string(10),
+        "bgg_user": random_lower_string(6),
         "name": random_lower_string(10),
         "surname": random_lower_string(15),
         "birthdate": random_date()}

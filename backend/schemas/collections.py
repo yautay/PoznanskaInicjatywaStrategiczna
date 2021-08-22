@@ -3,14 +3,15 @@ from typing import Optional
 from pydantic import BaseModel, AnyUrl
 
 
-class UserCollectionBase(BaseModel):
+class CollectionBase(BaseModel):
     updated: Optional[date] = datetime.now().date()
 
 
-class UserCollectionCreate(UserCollectionBase):
+class CollectionCreate(CollectionBase):
     pass
 
-class UserCollectionShow(BaseModel):
+
+class CollectionShow(BaseModel):
     id: int
     user_id: int
     updated: date

@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 from db.base_class import Base
 
 
-class UserCollection(Base):
+class Collection(Base):
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user.id"), index=True)
-    updated = Column(Date, nullable=False, index=True)
+    updated = Column(Date)
+    user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", back_populates="collection")
