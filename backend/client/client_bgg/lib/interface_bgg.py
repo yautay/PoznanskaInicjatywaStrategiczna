@@ -1,11 +1,17 @@
 import requests
 from client.client_bgg.model.parameter import Parameter
+from client.client_bgg.model.base import Base
 
 
-class InterfaceBgg(object):
-    def __init__(self, url: str, params: dict):
-        self._url = url
-        self._params = params
+class InterfaceBgg:
 
-    def get_data(self):
-        return requests.get(self._url, params=self._params)
+    @staticmethod
+    def get_data(bgg_object: Base):
+        try:
+            data = requests.get(bgg_object.url, params=bgg_object.parameters())
+            if data.status_code == 200:
+                return data.text
+            else:
+                return None
+        except:
+            return None
