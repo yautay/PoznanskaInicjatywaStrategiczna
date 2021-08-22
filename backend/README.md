@@ -48,6 +48,10 @@ uncomment following lines from [env.py](alembic/env.py)
 # config = context.config
 # config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
 ```
+comment following lines from [env.py](alembic/env.py)
+```
+render_as_batch=True
+```
 
 ### Build and run migrations
 
@@ -57,6 +61,19 @@ to upgrade migration:
 ```alembic upgrade head``` or refer to revision id. ```alembic upgrade ae12er34```  
 to downgrade migration:  
 ```alembic upgrade base``` downgrades to <span style="color:red">*nothing*</span> or refer to revision id. ```alembic upgrade ae12er34``` 
+
+**Autogenerate will detect:**
+
+* <span style="color:green">Table additions, removals</span>. 
+* <span style="color:green">Column additions, removals</span>. 
+* Change of nullable status on columns. 
+* Basic changes in <span style="color:green">indexes</span> and explicitly-named unique constraints 
+* Basic changes in <span style="color:green">foreign key constraints</span>
+
+**Autogenerate can not detect:**
+
+* Changes of <span style="color:pink">table name</span>. These will come out as an add/drop of two different tables, and should be hand-edited into a name change instead.
+* Changes of <span style="color:pink">column name</span>. Like table name changes, these are detected as a column add/drop pair, which is not at all the same as a name change.
 
 ## Changelog
 

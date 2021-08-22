@@ -7,6 +7,7 @@ class UserBase(BaseModel):
     login: Optional[str] = None
     password: Optional[str] = None
     email: Optional[EmailStr] = None
+    bgg_user: Optional[str] = None
     name: Optional[str] = None
     surname: Optional[str] = None
     birthdate: Optional[date] = None

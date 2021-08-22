@@ -5,8 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 from db.base import Base
-from db.models.user import User
-from db.models.article import Article
+from db.models.user import *
+from db.models.article import *
+from db.models.user_collection import *
 
 # uncomment for PostgreSQL
 # from core.config import settings
@@ -71,7 +72,8 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata,
+            render_as_batch=True
         )
 
         with context.begin_transaction():
