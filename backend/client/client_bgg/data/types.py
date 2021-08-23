@@ -15,6 +15,17 @@ class DomainType(object):
     VIDEOGAME = "videogame"
 
 
+class SortType(object):
+    USERNAME = "username"
+    DATE = "date"
+
+
+class FamilyType(object):
+    RPG = "rpg"
+    RPGPERIODICAL = "rpgperiodical"
+    BOARDGAMEFAMILY = "boardgamefamily"
+
+
 class CollectionType(object):
     BOARDGAME = "boardgame"
     BOARDGAMEEXPANSION = "boardgameexpansion"

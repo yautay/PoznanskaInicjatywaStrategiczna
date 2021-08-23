@@ -1,7 +1,6 @@
 from typing import List
-
 from client.client_bgg.lib.parameter import Parameter
-from client.client_bgg.lib.types import CollectionType
+from client.client_bgg.data.types import CollectionType
 from client.client_bgg.model.base import Base
 from client.client_bgg.data import data_client_bgg
 
@@ -36,9 +35,11 @@ class Collection(Base):
                  maxplays: int = None,
                  showprivate: int = 0,
                  collid: int = None,
-                 modifiedsince: int = 0,
+                 modifiedsince: int = None,
                  ):
         super().__init__(data_client_bgg.xmlapi2_root_path() + "collection")
+
+        assert subtype in CollectionType.__dict__.values()
 
         self._username = Parameter("username", username)
         self._version = Parameter("version", version)

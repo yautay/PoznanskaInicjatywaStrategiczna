@@ -1,17 +1,26 @@
+from typing import List
 from client.client_bgg.lib.parameter import Parameter
-from client.client_bgg.lib.types import ThingType
+from client.client_bgg.data.types import ThingType
 from client.client_bgg.model.base import Base
 from client.client_bgg.data import data_client_bgg
 
 
 class Thing(Base):
-    def __init__(self, _id: int, _type: tuple[str] = (ThingType.BOARDGAME,), versions: int = 0, videos: int = 0,
-                 stats: int = 0, historical: int = 0, marketplace: int = 0, comments: int = 0, page: int = 1,
+    def __init__(self,
+                 _id: int,
+                 _type: List[str] = [ThingType.BOARDGAME],
+                 versions: int = 0,
+                 videos: int = 0,
+                 stats: int = 0,
+                 historical: int = 0,
+                 marketplace: int = 0,
+                 comments: int = 0,
+                 page: int = 1,
                  pagesize: int = 10):
         super().__init__(data_client_bgg.xmlapi2_root_path() + "thing")
 
-        if not (10 <= pagesize <= 100):
-            raise AttributeError
+        assert (10 <= pagesize <= 100)
+        assert _type in ThingType.__dict__.values()
 
         self._id = Parameter("id", _id)
         self._type = Parameter("type", _type)
