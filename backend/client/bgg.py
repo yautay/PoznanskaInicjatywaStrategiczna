@@ -1,6 +1,6 @@
-from requests import request
+from client.client_bgg.lib.interface_bgg import InterfaceBgg
 
 
-
-class ClientBgg(object):
-    pass
+class BggClient(InterfaceBgg):
+    def __init__(self):
+        pass

@@ -8,7 +8,7 @@ from client.client_bgg.data import data_client_bgg
 class Thing(Base):
     def __init__(self,
                  _id: int,
-                 _type: List[str] = [ThingType.BOARDGAME],
+                 _type: List[str] = ThingType.BOARDGAME,
                  versions: int = 0,
                  videos: int = 0,
                  stats: int = 0,

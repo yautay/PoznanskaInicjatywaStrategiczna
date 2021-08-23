@@ -3,6 +3,9 @@ from client.client_bgg.model.base import Base
 from client.client_bgg.data import data_client_bgg
 import re
 
+patterns = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?$"]
+compiled = [re.compile(patterns[0]), re.compile(patterns[1])]
+
 
 class Threads(Base):
     def __init__(self,
@@ -12,12 +15,8 @@ class Threads(Base):
                  count: int = None):
         super().__init__(data_client_bgg.xmlapi2_root_path() + "thread")
 
-        self.patterns = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-                         "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,3})?$"]
-        self.compiled = [re.compile(self.patterns[0]), re.compile(self.patterns[1])]
-
         if minarticledate:
-            assert self.compiled[0].search(minarticledate) or self.compiled[1].search(minarticledate)
+            assert compiled[0].search(minarticledate) or compiled[1].search(minarticledate)
 
         self._id = Parameter("id", _id)
         self._minarticleid = Parameter("minarticleid", minarticleid)
