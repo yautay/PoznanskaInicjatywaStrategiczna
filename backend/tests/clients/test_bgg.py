@@ -5,7 +5,7 @@ import datetime
 import json
 
 
-def test_bgg_xmlapi2():
+def test_bgg_xmlapi2_endpoints():
     bgg_client = BggClient()
 
     for instance in [tw.get_user(),
@@ -15,9 +15,8 @@ def test_bgg_xmlapi2():
                      tw.get_family(),
                      tw.get_guild(),
                      tw.get_forum(),
-                     tw.get_threads()]:
+                     tw.get_threads(),
+                     tw.get_plays(),
+                     tw.get_hot(),
+                     tw.get_search()]:
         assert BggClient().get_data(instance)[0] == 200
-        assert BggClient().get_data(instance)[1] != None
-
-
-

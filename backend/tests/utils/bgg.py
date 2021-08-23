@@ -6,6 +6,9 @@ from client.client_bgg.model.thing import Thing
 from client.client_bgg.model.threads import Threads
 from client.client_bgg.model.user import User
 from client.client_bgg.model.forumlist import ForumList
+from client.client_bgg.model.plays import Plays
+from client.client_bgg.model.hot_items import HotItems
+from client.client_bgg.model.search import Search
 
 
 class TestWraper:
@@ -40,3 +43,15 @@ class TestWraper:
     @staticmethod
     def get_threads():
         return Threads(1453)
+
+    @staticmethod
+    def get_plays():
+        return Plays("clown", 10183)
+
+    @staticmethod
+    def get_hot():
+        return HotItems()
+
+    @staticmethod
+    def get_search():
+        return Search("russia")
