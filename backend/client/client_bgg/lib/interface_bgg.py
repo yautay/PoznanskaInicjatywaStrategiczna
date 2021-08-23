@@ -1,12 +1,12 @@
 import time
 
 import requests
-from client.client_bgg.model.base import Base
+from client.client_bgg.model.base_model import BaseModel
 
 
 class InterfaceBgg:
 
-    def get_data(self, bgg_object: Base):
+    def get_data(self, bgg_object: BaseModel):
         data = requests.get(bgg_object.url, params=bgg_object.parameters())
         if data.status_code == 200:
             return [data.status_code, data.text]

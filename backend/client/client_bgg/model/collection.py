@@ -1,11 +1,11 @@
 from typing import List
 from client.client_bgg.lib.parameter import Parameter
 from client.client_bgg.data.types import CollectionType
-from client.client_bgg.model.base import Base
+from client.client_bgg.model.base_model import BaseModel
 from client.client_bgg.data import data_client_bgg
 
 
-class Collection(Base):
+class Collection(BaseModel):
     def __init__(self,
                  username: str,
                  version: int = 0,

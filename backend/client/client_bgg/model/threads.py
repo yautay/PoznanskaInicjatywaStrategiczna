@@ -1,5 +1,5 @@
 from client.client_bgg.lib.parameter import Parameter
-from client.client_bgg.model.base import Base
+from client.client_bgg.model.base_model import BaseModel
 from client.client_bgg.data import data_client_bgg
 import re
 
@@ -7,7 +7,7 @@ patterns = ["^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2
 compiled = [re.compile(patterns[0]), re.compile(patterns[1])]
 
 
-class Threads(Base):
+class Threads(BaseModel):
     def __init__(self,
                  _id: int,
                  minarticleid: int = None,

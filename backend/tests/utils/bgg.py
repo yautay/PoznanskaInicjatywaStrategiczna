@@ -13,8 +13,8 @@ from client.client_bgg.model.search import Search
 
 class TestWraper:
     @staticmethod
-    def get_thing():
-        return Thing(10183)
+    def get_thing(**kwargs) -> Thing:
+        return Thing(10183, **kwargs)
 
     @staticmethod
     def get_user():

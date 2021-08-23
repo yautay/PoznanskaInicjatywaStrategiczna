@@ -1,4 +1,4 @@
-class Base(object):
+class BaseModel(object):
     def __init__(self, url):
         self._url = url
 
