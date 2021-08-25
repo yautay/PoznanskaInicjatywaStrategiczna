@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from ..conftests import *
 from client.bgg import BggClient
 from tests.utils.bgg import TestWraper as tw
@@ -22,6 +24,7 @@ def test_bgg_xmlapi2_endpoints():
                      tw.get_search()]:
         assert BggClient().get_data(instance)[0] == 200
 
+
 def test_thing_parser():
     parser = ThingParser(BggClient().get_data(tw.get_thing(versions=1,
                                                            videos=1,
@@ -29,4 +32,19 @@ def test_thing_parser():
                                                            historical=1,
                                                            marketplace=1,
                                                            comments=1))[1])
-    print(parser.payload)
+    print(parser.name)
+    print(parser.boardgame_implementations)
+    print("CAT:")
+    pprint(parser.boardgame_categories)
+    print("FAMILY:")
+    pprint(parser.boardgame_family)
+    print("MECH:")
+    pprint(parser.boardgame_mechanics)
+    print("DESIG:")
+    pprint(parser.designers)
+    print("ARTIST:")
+    pprint(parser.artists)
+    print("PUBLISHERS:")
+    pprint(parser.boardgame_publishers)
+    pprint(parser.versions)
+
