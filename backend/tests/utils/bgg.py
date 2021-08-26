@@ -11,7 +11,7 @@ from client.client_bgg.model.hot_items import HotItems
 from client.client_bgg.model.search import Search
 
 
-class TestWraper:
+class TestWrapper:
     @staticmethod
     def get_thing(**kwargs) -> Thing:
         return Thing(10183, **kwargs)
