@@ -1,6 +1,7 @@
 from pprint import pprint
 
 from ..conftests import *
+from client.client_bgg.parser.collection_parser import CollectionParser
 from client.bgg import BggClient
 from tests.utils.bgg import TestWraper as tw
 from client.client_bgg.parser.thing_parser import ThingParser
@@ -32,19 +33,9 @@ def test_thing_parser():
                                                            historical=1,
                                                            marketplace=1,
                                                            comments=1))[1])
-    print(parser.name)
-    print(parser.boardgame_implementations)
-    print("CAT:")
-    pprint(parser.boardgame_categories)
-    print("FAMILY:")
-    pprint(parser.boardgame_family)
-    print("MECH:")
-    pprint(parser.boardgame_mechanics)
-    print("DESIG:")
-    pprint(parser.designers)
-    print("ARTIST:")
-    pprint(parser.artists)
-    print("PUBLISHERS:")
-    pprint(parser.boardgame_publishers)
-    pprint(parser.versions)
+    assert len(parser.game) == 17
 
+
+def test_collection_parser():
+    parser = CollectionParser(BggClient().get_data(tw.get_collection())[1])
+    assert len(parser.items) > 180

@@ -21,8 +21,8 @@ class TestWraper:
         return User("clown")
 
     @staticmethod
-    def get_collection():
-        return Collection("clown")
+    def get_collection(**kwargs) -> Collection:
+        return Collection("yautay", **kwargs)
 
     @staticmethod
     def get_guild():
