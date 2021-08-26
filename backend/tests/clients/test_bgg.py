@@ -10,8 +10,6 @@ import json
 
 
 def test_bgg_xmlapi2_endpoints():
-    bgg_client = BggClient()
-
     for instance in [tw.get_user(),
                      tw.get_thing(),
                      tw.get_collection(),
