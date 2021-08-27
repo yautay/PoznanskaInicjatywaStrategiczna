@@ -13,6 +13,7 @@ class CollectionParser(BaseParser):
         collection = self.root
         collection_data = {}
         for item in collection:
+
             collection_data[item.attrib["objectid"]] = {}
             for element in item:
                 if element.tag == "name":

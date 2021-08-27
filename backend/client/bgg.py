@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from client.client_bgg.lib.interface_bgg import InterfaceBgg
 from client.client_bgg.parser.collection_parser import CollectionParser
 from client.client_bgg.parser.thing_parser import ThingParser
@@ -16,9 +18,14 @@ class BggClient(InterfaceBgg):
         else:
             return None
 
-    def get_thing_by_id(self, _id: int, **kwargs) -> dict or None:
+    def get_thing_by_id(self, _id: int or list[int], **kwargs) -> dict or None:
         bgg_data = self.get_data(Thing(_id, **kwargs))
+        print(bgg_data)
         if bgg_data[0] == 200:
-            return ThingParser(bgg_data[1])
+            # TODO To jest do dupy ;/
+            if isinstance(_id, int):
+                return ThingParser(bgg_data[1])
+            else:
+                return ThingParser(bgg_data[1], group_call=True)
         else:
             return None

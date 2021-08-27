@@ -31,12 +31,9 @@ def test_thing_parser():
                                                            historical=1,
                                                            marketplace=1,
                                                            comments=1))[1])
-    pprint(parser.game)
     assert len(parser.game) == 17
 
 
 def test_collection_parser():
     parser = CollectionParser(BggClient().get_data(tw.get_collection())[1])
-    for key in parser.items.keys():
-        print(parser.items[key])
     assert len(parser.items) > 180

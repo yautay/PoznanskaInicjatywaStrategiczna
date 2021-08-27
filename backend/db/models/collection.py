@@ -9,7 +9,7 @@ class Collection(Base):
     updated = Column(Date)
     user_id = Column(Integer, ForeignKey("user.id"))
     game_index = Column(Integer, ForeignKey("game.index"))
-    want_to_play = Column(Boolean)
+    want_to_play = Column(Integer)
     data = Column(JSON)
     user = relationship("User", back_populates="collection")
     game = relationship("Game", back_populates="collection")

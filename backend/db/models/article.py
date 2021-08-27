@@ -9,7 +9,7 @@ class Article(Base):
     title = Column(String(250), nullable=False)
     content = Column(String(2000), nullable=False)
     picture = Column(String(250), nullable=False)
-    is_active = Column(Boolean, default=False, nullable=False)
+    is_active = Column(Integer, default=False, nullable=False)
     created_at = Column(Date, nullable=False, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", back_populates="article")
