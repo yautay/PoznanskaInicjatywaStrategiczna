@@ -3,7 +3,7 @@ from datetime import date
 from schemas.collections import CollectionCreate
 from db.models.collection import Collection
 from db.models.user import User
-from client.bgg import BggClient
+from client.bgg_client import BggClient
 from db.repository.games import synchronize_games
 
 

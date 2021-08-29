@@ -1,11 +1,10 @@
 from pprint import pprint
 
-from client.client_bgg.parser.base_parser import BaseParser
+from client.client_bgg.parser.base_parser import Parser
 
 
-class ThingParser(BaseParser):
+class ThingParser(Parser):
     def __init__(self, xml_payload: str):
-        super().__init__(xml_payload)
         self.thumbnails = self.get_root_elements_text("thumbnail")
         self.images = self.get_root_elements_text("image")
         self.names = self.get_root_attributes("name")

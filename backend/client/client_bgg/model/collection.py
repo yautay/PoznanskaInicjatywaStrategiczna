@@ -70,7 +70,3 @@ class Collection(BaseModel):
         self._showprivate = Parameter("showprivate", showprivate)
         self._collid = Parameter("collid", collid)
         self._modifiedsince = Parameter("modifiedsince", modifiedsince)
-
-
-
-

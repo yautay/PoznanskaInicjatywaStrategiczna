@@ -1,13 +1,14 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 from datetime import date
 from schemas.collections import CollectionCreate
 from db.models.collection import Collection
 from db.models.game import Game
 from db.models.user import User
-from client.bgg import BggClient
+from client.bgg_client import BggClient
 
-
-def synchronize_games(db: Session, indexes: list[int]) -> bool:
+def synchronize_games(db: Session, indexes: List[int]) -> bool:
     games = BggClient().get_thing_by_id(indexes,
                                         versions=1,
                                         videos=1,

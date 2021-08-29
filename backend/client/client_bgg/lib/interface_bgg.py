@@ -1,17 +1,58 @@
 import time
 
 import requests
-from client.client_bgg.model.base_model import BaseModel
+from client.client_bgg.model import *
+from client.client_bgg.parser import *
 
 
 class InterfaceBgg:
+    def __init__(self, bgg_object):
+        assert isinstance(bgg_object, BaseModel)
+        self.__bgg_object = bgg_object
+        self.__client = self.Response(self.__bgg_object)
+        self.parser = self.__get_parser(self.__bgg_object)
 
-    def get_data(self, bgg_object: BaseModel):
-        data = requests.get(bgg_object.url, params=bgg_object.parameters())
-        if data.status_code == 200:
-            return [data.status_code, data.text]
-        elif data.status_code == 202:
-            time.sleep(5)
-            return self.get_data(bgg_object=bgg_object)
+    def get_data(self) -> dict or None:
+        self.__client.send_request(self.__bgg_object)
+        if self.__client.html_code == 200:
+            return self.__parse_data(self.__client.data, self.parser)
+        elif self.__client.html_code == 202:
+            retry = 1
+            while retry < 100:
+                time.sleep(5)
+                retry += 1
+                self.__client.send_request()
+                if self.__client.html_code == 200:
+                    return self.__parse_data(self.__client.data, self.parser)
+                else:
+                    pass
+            return None
         else:
-            raise Exception
+            return None
+
+    @staticmethod
+    def __get_parser(bgg_object):
+        if isinstance(bgg_object, Thing):
+            return ThingParser
+        elif isinstance(bgg_object, Collection):
+            return CollectionParser
+
+    @staticmethod
+    def __parse_data(data, parser):
+        return parser.get_data(data)
+
+    class Response(object):
+        def __init__(self, bgg_object):
+            self.__response = None
+            bgg = bgg_object
+
+        def send_request(self, bgg):
+            self.__response = requests.get(bgg.url, bgg.parameters)
+
+        @property
+        def html_code(self):
+            return self.__response.status_code
+
+        @property
+        def data(self):
+            return self.__response.text

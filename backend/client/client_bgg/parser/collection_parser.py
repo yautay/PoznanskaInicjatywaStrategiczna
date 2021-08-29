@@ -1,19 +1,14 @@
 from pprint import pprint
 
-from client.client_bgg.parser.base_parser import BaseParser
+from client.client_bgg.parser.base_parser import Parser, ParserWrapper
 
 
-class CollectionParser(BaseParser):
-    def __init__(self, xml_payload: str):
-        super().__init__(xml_payload)
+class CollectionParser(Parser, ParserWrapper):
+    def get_data(self, xml_data: str):
+        et_data = self.get_root(xml_data)
+        data = {}
 
-        self.items = self.get_items()
-
-    def get_items(self):
-        collection = self.root
-        collection_data = {}
         for item in collection:
-
             collection_data[item.attrib["objectid"]] = {}
             for element in item:
                 if element.tag == "name":
