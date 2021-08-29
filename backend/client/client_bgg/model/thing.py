@@ -7,7 +7,7 @@ from client.client_bgg.data import data_client_bgg
 
 class Thing(BaseModel):
     def __init__(self,
-                 _id: int,
+                 _id: int or list[int],
                  _type: List[str] = ThingType.BOARDGAME,
                  versions: int = 0,
                  videos: int = 0,

@@ -11,13 +11,11 @@ class Parser(metaclass=abc.ABCMeta):
                 NotImplemented)
 
     @abc.abstractmethod
-    def get_data(self, xml_data):
+    def parse_data(self, xml_data):
         """Return parsed data"""
         raise NotImplementedError
 
 
-
-#
 class ParserWrapper:
     @staticmethod
     def get_root(xml_data: str) -> ET:

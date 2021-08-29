@@ -22,14 +22,21 @@ def test_bgg_xmlapi2_endpoints():
         assert BggClient(instance).get_response()
 
 
-# def test_thing_parser():
-#     parser = ThingParser(BggClient().get_data(tw.get_thing(versions=1,
-#                                                            videos=1,
-#                                                            stats=1,
-#                                                            historical=1,
-#                                                            marketplace=1,
-#                                                            comments=1))[1])
-#     assert len(parser.game) == 17
+def test_thing_parser():
+    thing = tw.get_thing(versions=1,
+                         videos=1,
+                         stats=1,
+                         historical=1,
+                         marketplace=1,
+                         comments=1)
+    client = BggClient(thing)
+    print(client.get_data())
+
+
+def test_things_parser():
+    things = tw.get_things()
+    client = BggClient(things)
+    print(client.get_data())
 
 
 # def test_collection_parser():

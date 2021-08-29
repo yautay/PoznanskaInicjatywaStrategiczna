@@ -10,7 +10,7 @@ class InterfaceBgg:
         assert isinstance(bgg_object, BaseModel)
         self.__bgg_object = bgg_object
         self.__client = self.Response(self.__bgg_object)
-        self.parser = self.__get_parser(self.__bgg_object)
+        self.__parser = self.__get_parser()
 
     def get_response(self) -> bool:
         self.__client.send_request(self.__bgg_object)
@@ -30,20 +30,18 @@ class InterfaceBgg:
         else:
             return False
 
+    def __get_parser(self):
+        if isinstance(self.__bgg_object, Thing):
+            return ThingParser()
+        elif isinstance(self.__bgg_object, Collection):
+            return CollectionParser()
+
+    def __parse_data(self):
+        return self.__parser.parse_data(self.__client.data)
+
     def get_data(self) -> dict or None:
         if self.get_response():
-            return self.__parse_data(self.__client.data, self.parser)
-
-    @staticmethod
-    def __get_parser(bgg_object):
-        if isinstance(bgg_object, Thing):
-            return ThingParser
-        elif isinstance(bgg_object, Collection):
-            return CollectionParser
-
-    @staticmethod
-    def __parse_data(data, parser):
-        return parser.get_data(data)
+            return self.__parse_data()
 
     class Response(object):
         def __init__(self, bgg_object):
