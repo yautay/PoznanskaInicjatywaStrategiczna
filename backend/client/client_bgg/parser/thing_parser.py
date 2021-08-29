@@ -21,28 +21,68 @@ class ThingParser(Parser, ParserWrapper):
         thing.data[key.NAME] = self.get_name(item)
         thing.data[key.DESCRIPTION] = self.get_description(item)
         thing.data[key.DESIGNERS] = self.get_designers(item)
-
+        thing.data[key.ARTISTS] = self.get_artists(item)
+        thing.data[key.PUBLISHERS] = self.get_publishers(item)
+        thing.data[key.BOARDGAME_CATEGORIES] = self.get_boardgame_categories(item)
+        thing.data[key.BOARDGAME_FAMILY] = self.get_boardgame_families(item)
+        thing.data[key.BOARDGAME_EXPANSIONS] = self.get_boardgame_expansions(item)
+        thing.data[key.BOARDGAME_IMPLEMENTATIONS] = self.get_boardgame_implementations(item)
+        thing.data[key.BOARDGAME_MECHANICS] = self.get_boardgame_mechanics(item)
+        # thing.data[key.BOARDGAME_VERSIONS] = self.get_boardgame_versions(item)
         return thing.data
 
     @staticmethod
     def get_name(item):
         for element in item:
-            if element.tag == "name":
-                if element.attrib["type"] == "primary":
-                    return element.attrib["value"]
+            if element.tag == "name" and element.attrib["type"] == "primary":
+                return element.attrib["value"]
+        return None
 
     @staticmethod
     def get_description(item):
         for element in item:
             if element.tag == "description":
                 return element.text
+        return None
+
+    def get_designers(self, item):
+        return self.link_extractor(item, "boardgameartist")
+
+    def get_artists(self, item):
+        return self.link_extractor(item, "boardgameartist")
+
+    def get_publishers(self, item):
+        return self.link_extractor(item, "boardgamepublisher")
+
+    def get_boardgame_categories(self, item):
+        return self.link_extractor(item, "boardgamecategory")
+
+    def get_boardgame_families(self, item):
+        return self.link_extractor(item, "boardgamefamily")
+
+    def get_boardgame_expansions(self, item):
+        return self.link_extractor(item, "boardgameexpansion")
+
+    def get_boardgame_implementations(self, item):
+        return self.link_extractor(item, "boardgameimplementation")
+
+    def get_boardgame_mechanics(self, item):
+        return self.link_extractor(item, "boardgamemechanic")
+
+    def get_boardgame_versions(self, item):
+        return self.link_extractor(item, "boardgameversion")
 
     @staticmethod
-    def get_designers(item):
+    def link_extractor(item, attribute: str):
+        data = []
         for element in item:
-            print(element.tag, element.attrib)
-            if element.tag == "gamedesigner":
-                print(element.attrib)
+            if element.tag == "link" and element.attrib["type"] == attribute:
+                data.append([element.attrib["id"], element.attrib["value"]])
+        if data:
+            return ParserWrapper.remove_duplicates_from_list(data)
+        else:
+            return None
+
 
 class ThingModel(object):
     def __init__(self):
@@ -92,32 +132,7 @@ class ThingModel(object):
     #     else:
     #         return "undefined"
     #
-    # def get_name(self) -> str:
-    #     try:
-    #         if len(self.names) > 0:
-    #             for d in self.names:
-    #                 if d["type"] == "primary":
-    #                     return d["value"]
-    #                 else:
-    #                     return "undefined"
-    #         else:
-    #             return "undefined"
-    #     except:
-    #         return "undefined"
     #
-    # def get_description(self) -> list or str:
-    #     if self.description:
-    #         return self.description
-    #     else:
-    #         return "undefined"
-    #
-    # def get_published(self) -> list or str:
-    #     if self.published:
-    #         for d in self.published:
-    #             if d["value"]:
-    #                 return d["value"]
-    #     else:
-    #         return "undefined"
     #
     # def get_min_players(self) -> str:
     #     if self.minplayers:
@@ -131,93 +146,11 @@ class ThingModel(object):
     #     else:
     #         return "undefined"
     #
-    # def get_boardgame_categories(self) -> list or str:
-    #     categories = self.value_extractor(self.links, "boardgamecategory")
-    #     if categories:
-    #         return categories
-    #     else:
-    #         return "undefined"
     #
-    # def get_boardgame_mechanics(self) -> list or str:
-    #     mechanics = self.value_extractor(self.links, "boardgamemechanic")
-    #     if mechanics:
-    #         return mechanics
-    #     else:
-    #         return "undefined"
-    #
-    # def get_boardgame_family(self) -> list or str:
-    #     family = self.value_extractor(self.links, "boardgamefamily")
-    #     if family:
-    #         return family
-    #     else:
-    #         return "undefined"
-    #
-    # def get_boardgame_expansions(self) -> list or str:
-    #     expansions = self.value_extractor(self.links, "boardgameexpansion")
-    #     if expansions:
-    #         return expansions
-    #     else:
-    #         return "undefined"
-    #
-    # def get_versions(self) -> dict or str:
-    #     if self.versions:
-    #         return self.versions
-    #     else:
-    #         return "undefined"
-    #
-    # def get_designers(self) -> list or str:
-    #     designers = self.value_extractor(self.links, "boardgamedesigner")
-    #     tmp_ids = []
-    #     cleaned_list = []
-    #     for designer in designers:
-    #         designer_id = designer[0]
-    #         designer_name = designer[1]
-    #         if designer_id not in tmp_ids:
-    #             tmp_ids.append(designer_id)
-    #             cleaned_list.append([designer_id, designer_name])
-    #     if designers:
-    #         return cleaned_list
-    #     else:
-    #         return "undefined"
-    #
-    # def get_artists(self) -> list or str:
-    #     artists = self.value_extractor(self.links, "boardgameartist")
-    #     tmp_ids = []
-    #     cleaned_list = []
-    #     for artist in artists:
-    #         artist_id = artist[0]
-    #         artist_name = artist[1]
-    #         if artist_id not in tmp_ids:
-    #             tmp_ids.append(artist_id)
-    #             cleaned_list.append([artist_id, artist_name])
-    #     if artists:
-    #         return cleaned_list
-    #     else:
-    #         return "undefined"
-    #
-    # def get_boardgame_publishers(self) -> list or str:
-    #     publishers = self.value_extractor(self.links, "boardgamepublisher")
-    #     if publishers:
-    #         return publishers
-    #     else:
-    #         return "undefined"
     #
     # def get_marketplacelistings(self) -> list or str:
     #     return self.marketplacelistings
     #
-    # @staticmethod
-    # def value_extractor(elements, key) -> list or None:
-    #     data = []
-    #     try:
-    #         for element in elements:
-    #             try:
-    #                 if element["type"] == key:
-    #                     data.append([element["id"], element["value"]])
-    #             except:
-    #                 pass
-    #     except:
-    #         return None
-    #     return data
     #
     # def make_versions(self) -> list or None:
     #     root = self.root

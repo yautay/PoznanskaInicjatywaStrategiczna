@@ -24,6 +24,19 @@ class ParserWrapper:
         except:
             return None
 
+    @staticmethod
+    def remove_duplicates_from_list(element: list[list]):
+        tmp_ids = []
+        cleaned_list = []
+        for x in element:
+            x_id = x[0]
+            x_val = x[1]
+            if x_id not in tmp_ids:
+                tmp_ids.append(x_id)
+                cleaned_list.append([x_id, x_val])
+        return cleaned_list
+
+
     # def get_root_elements(self, element: str) -> list[dict] or None:
     #     attributes = []
     #     try:
