@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Date, ForeignKey, Boolean, JSON
+from sqlalchemy import Column, Integer, Date, ForeignKey, Boolean, JSON, String
 from sqlalchemy.orm import relationship
 
 from db.base_class import Base
@@ -9,7 +9,15 @@ class Collection(Base):
     updated = Column(Date)
     user_id = Column(Integer, ForeignKey("user.id"))
     game_index = Column(Integer, ForeignKey("game.index"))
-    want_to_play = Column(Integer)
-    data = Column(JSON)
+    comment = Column(String)
+    numplays = Column(Integer)
+    fortrade = Column(Integer)
+    preordered = Column(Integer)
+    prevowned = Column(Integer)
+    want = Column(Integer)
+    wanttobuy = Column(Integer)
+    wanttoplay = Column(Integer)
+    wishlist = Column(Integer)
+    lastmodified = Column(Integer)
     user = relationship("User", back_populates="collection")
     game = relationship("Game", back_populates="collection")

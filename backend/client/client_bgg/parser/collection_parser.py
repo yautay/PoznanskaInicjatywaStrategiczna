@@ -5,53 +5,62 @@ from client.client_bgg.parser.item_keys import CollectionItemKeys as key
 
 class CollectionParser(Parser, ParserWrapper):
     def parse_data(self, xml_data: str):
-        items = []
+        items = {}
         root = self.get_root(xml_data)
         for item in root:
-            print(item.tag)
+            items[item.attrib["objectid"]] = self.parse_item(item)
         return items
 
     def parse_item(self, item):
-        collection = CollectionModel
-        collection.data[key.NAME] = self.get_boardgame_name(item)
-        collection.data[key.DESCRIPTION] = self.get_boardgame_description(item)
-        return collection.data
+        entity = CollectionModel()
+        for element in item:
+            if element.tag == key.NUMPLAYS:
+                entity.data[key.NUMPLAYS] = element.text
+            elif element.tag == key.COMMENT:
+                entity.data[key.COMMENT] = element.text
+            elif element.tag == key.STATUS:
+                entity.data[key.STATUS] = self.parse_status(element.attrib.items())
+        return entity.data
 
     @staticmethod
-    def get_boardgame_name(item):
-        for element in item:
-            if element.tag == "name" and element.attrib["type"] == "primary":
-                return element.attrib["value"]
-        return None
-
-    @staticmethod
-    def get_boardgame_description(item):
-        for element in item:
-            if element.tag == "description":
-                return element.text
-        return None
+    def parse_status(element):
+        status = {}
+        for i in element:
+            if i[0] == key.PREVOWNED:
+                status[key.PREVOWNED] = i[1]
+            elif i[0] == key.FORTRADE:
+                status[key.FORTRADE] = i[1]
+            elif i[0] == key.WANT:
+                status[key.WANT] = i[1]
+            elif i[0] == key.WANTTOPLAY:
+                status[key.WANTTOPLAY] = i[1]
+            elif i[0] == key.WANTTOBUY:
+                status[key.WANTTOBUY] = i[1]
+            elif i[0] == key.WISHLIST:
+                status[key.WISHLIST] = i[1]
+            elif i[0] == key.PREORDERED:
+                status[key.PREORDERED] = i[1]
+            elif i[0] == key.LASTMODIFIED:
+                status[key.LASTMODIFIED] = i[1]
+        return status
 
 
 class CollectionModel(object):
     def __init__(self):
         self.__data = {
-            key.NAME: None,
-            key.DESCRIPTION: None,
-            key.PUBLISHED: None,
-            key.THUMBNAILS: None,
-            key.IMAGES: None,
-            key.MIN_PLAYERS: None,
-            key.MAX_PLAYERS: None,
-            key.DESIGNERS: None,
-            key.ARTISTS: None,
-            key.PUBLISHERS: None,
-            key.BOARDGAME_IMPLEMENTATIONS: None,
-            key.BOARDGAME_CATEGORIES: None,
-            key.BOARDGAME_MECHANICS: None,
-            key.BOARDGAME_FAMILY: None,
-            key.BOARDGAME_VERSIONS: None,
-            key.BOARDGAME_EXPANSIONS: None,
-            key.MARKETPLACE: None
+            key.NUMPLAYS: None,
+            key.COMMENT: None,
+            key.STATUS: {
+                key.OWN: None,
+                key.PREVOWNED: None,
+                key.FORTRADE: None,
+                key.WANT: None,
+                key.WANTTOPLAY: None,
+                key.WANTTOBUY: None,
+                key.WISHLIST: None,
+                key.PREORDERED: None,
+                key.LASTMODIFIED: None,
+            }
         }
 
     @property

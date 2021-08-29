@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from ..conftests import *
 from client.bgg_client import BggClient
 from tests.utils.bgg import TestWrapper as tw
@@ -45,5 +47,6 @@ def test_things_parser():
 def test_collection_parser():
     collection = tw.get_collection()
     client = BggClient(collection)
+    pprint(client.get_data())
     for element in client.get_data():
         assert element
