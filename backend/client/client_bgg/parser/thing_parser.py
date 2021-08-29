@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from client.client_bgg.parser.base_parser import Parser, ParserWrapper
 from client.client_bgg.parser.item_keys import ThingItemKeys as key
 
@@ -9,49 +7,51 @@ class ThingParser(Parser, ParserWrapper):
         items = []
         root = self.get_root(xml_data)
         for item in root:
-            items.append({item.attrib["id"]: self.__parse_item(item)})
-
-        pprint(items)
-
-        raise Exception
+            items.append({item.attrib["id"]: self.parse_item(item)})
         return items
 
-    def __parse_item(self, item):
+    def parse_item(self, item):
         thing = ThingModel()
-        thing.data[key.NAME] = self.get_name(item)
-        thing.data[key.DESCRIPTION] = self.get_description(item)
-        thing.data[key.DESIGNERS] = self.get_designers(item)
-        thing.data[key.ARTISTS] = self.get_artists(item)
-        thing.data[key.PUBLISHERS] = self.get_publishers(item)
+        thing.data[key.NAME] = self.get_boardgame_name(item)
+        thing.data[key.DESCRIPTION] = self.get_boardgame_description(item)
+        thing.data[key.DESIGNERS] = self.get_boardgame_designers(item)
+        thing.data[key.ARTISTS] = self.get_boardgame_artists(item)
+        thing.data[key.PUBLISHERS] = self.get_boardgame_publishers(item)
         thing.data[key.BOARDGAME_CATEGORIES] = self.get_boardgame_categories(item)
         thing.data[key.BOARDGAME_FAMILY] = self.get_boardgame_families(item)
         thing.data[key.BOARDGAME_EXPANSIONS] = self.get_boardgame_expansions(item)
         thing.data[key.BOARDGAME_IMPLEMENTATIONS] = self.get_boardgame_implementations(item)
         thing.data[key.BOARDGAME_MECHANICS] = self.get_boardgame_mechanics(item)
-        # thing.data[key.BOARDGAME_VERSIONS] = self.get_boardgame_versions(item)
+        thing.data[key.MIN_PLAYERS] = self.get_boardgame_min_players(item)
+        thing.data[key.MAX_PLAYERS] = self.get_boardgame_max_players(item)
+        thing.data[key.PUBLISHED] = self.get_boardgame_published(item)
+        thing.data[key.THUMBNAILS] = self.get_boardgame_thumbnails(item)
+        thing.data[key.IMAGES] = self.get_boardgame_images(item)
+        thing.data[key.BOARDGAME_VERSIONS] = self.get_boardgame_versions(item)
+        thing.data[key.MARKETPLACE] = self.get_boardgame_market(item)
         return thing.data
 
     @staticmethod
-    def get_name(item):
+    def get_boardgame_name(item):
         for element in item:
             if element.tag == "name" and element.attrib["type"] == "primary":
                 return element.attrib["value"]
         return None
 
     @staticmethod
-    def get_description(item):
+    def get_boardgame_description(item):
         for element in item:
             if element.tag == "description":
                 return element.text
         return None
 
-    def get_designers(self, item):
+    def get_boardgame_designers(self, item):
         return self.link_extractor(item, "boardgameartist")
 
-    def get_artists(self, item):
+    def get_boardgame_artists(self, item):
         return self.link_extractor(item, "boardgameartist")
 
-    def get_publishers(self, item):
+    def get_boardgame_publishers(self, item):
         return self.link_extractor(item, "boardgamepublisher")
 
     def get_boardgame_categories(self, item):
@@ -69,8 +69,87 @@ class ThingParser(Parser, ParserWrapper):
     def get_boardgame_mechanics(self, item):
         return self.link_extractor(item, "boardgamemechanic")
 
+    @staticmethod
+    def get_boardgame_min_players(item):
+        for element in item:
+            if element.tag == "minplayers":
+                return element.attrib["value"]
+        return None
+
+    @staticmethod
+    def get_boardgame_max_players(item):
+        for element in item:
+            if element.tag == "maxplayers":
+                return element.attrib["value"]
+        return None
+
+    @staticmethod
+    def get_boardgame_published(item):
+        for element in item:
+            if element.tag == "yearpublished":
+                return element.attrib["value"]
+        return None
+
+    @staticmethod
+    def get_boardgame_thumbnails(item):
+        for element in item:
+            if element.tag == "thumbnail":
+                return element.text
+        return None
+
+    @staticmethod
+    def get_boardgame_images(item):
+        for element in item:
+            if element.tag == "image":
+                return element.text
+        return None
+
     def get_boardgame_versions(self, item):
-        return self.link_extractor(item, "boardgameversion")
+        vesions = {}
+        for element in item:
+            if element.tag == "versions":
+                for version in element:
+                    vesions[version.attrib["id"]] = self.parse_version(version)
+        return vesions
+
+    def parse_version(self, version):
+        data = {"name": self.link_extractor(version, "boardgameversion"),
+                "publisher": self.link_extractor(version, "boardgamepublisher"),
+                "artist": self.link_extractor(version, "boardgameartist")}
+        for element in version:
+            if element.tag == "name":
+                data["description"] = element.attrib["value"]
+            elif element.tag == "yearpublished":
+                data["yearpublished"] = element.attrib["value"]
+            elif element.tag == "thumbnail":
+                data["thumbnail"] = element.text
+            elif element.tag == "image":
+                data["image"] = element.text
+        return data
+
+    def get_boardgame_market(self, item):
+        market = []
+        for element in item:
+            if element.tag == "marketplacelistings":
+                for offer in element:
+                    market.append(self.parse_offer(offer))
+        return market
+
+    @staticmethod
+    def parse_offer(offer):
+        data = {}
+        for element in offer:
+            if element.tag == "condition":
+                data["condition"] = element.attrib["value"]
+            elif element.tag == "price":
+                data["price"] = [element.attrib["value"], element.attrib["currency"]]
+            elif element.tag == "link":
+                data["link"] = element.attrib["href"]
+            elif element.tag == "notes":
+                data["notes"] = element.attrib["value"]
+            elif element.tag == "listdate":
+                data["listdate"] = element.attrib["value"]
+        return data
 
     @staticmethod
     def link_extractor(item, attribute: str):
@@ -109,141 +188,3 @@ class ThingModel(object):
     @property
     def data(self):
         return self.__data
-
-
-
-
-    # def get_boardgame_implementations(self) -> list or str:
-    #     implementations = self.value_extractor(self.links, "boardgameimplementation")
-    #     if len(implementations) > 0:
-    #         return self.value_extractor(self.links, "boardgameimplementation")
-    #     else:
-    #         return "undefined"
-    #
-    # def get_thumbnails(self) -> list or str:
-    #     if self.thumbnails:
-    #         return self.thumbnails
-    #     else:
-    #         return "undefined"
-    #
-    # def get_images(self) -> list or str:
-    #     if self.images:
-    #         return self.images
-    #     else:
-    #         return "undefined"
-    #
-    #
-    #
-    # def get_min_players(self) -> str:
-    #     if self.minplayers:
-    #         return self.minplayers[0]["value"]
-    #     else:
-    #         return "undefined"
-    #
-    # def get_max_players(self) -> str:
-    #     if self.maxplayers:
-    #         return self.maxplayers[0]["value"]
-    #     else:
-    #         return "undefined"
-    #
-    #
-    #
-    # def get_marketplacelistings(self) -> list or str:
-    #     return self.marketplacelistings
-    #
-    #
-    # def make_versions(self) -> list or None:
-    #     root = self.root
-    #     versions = []
-    #     try:
-    #         for tree in root:
-    #             for leaf in tree:
-    #                 if leaf.tag == "versions":
-    #                     for version in leaf:
-    #                         versions.append(version)
-    #     except:
-    #         return None
-    #     return versions
-    #
-    # def parse_versions(self, versions_raw: list) -> dict or str:
-    #     versions = {}
-    #     for version in versions_raw:
-    #         version_thumb = self.get_text(version, "thumbnail")
-    #         version_image = self.get_text(version, "image")
-    #         version_name = self.get_attributes(version, "name")[0]["value"]
-    #         version_published = self.get_attributes(version, "yearpublished")[0]["value"]
-    #         if version_published == "0":
-    #             version_published = "undefined"
-    #         version_boardgameversion = []
-    #         version_boardgamepublisher = []
-    #         version_boardgameartist = []
-    #         version_language = []
-    #         for link in version:
-    #             try:
-    #                 if link.tag == "link":
-    #                     if link.attrib["type"] == "boardgameversion":
-    #                         version_boardgameversion.append([link.attrib["id"], link.attrib["value"]])
-    #                     elif link.attrib["type"] == "boardgamepublisher":
-    #                         version_boardgamepublisher.append([link.attrib["id"], link.attrib["value"]])
-    #                     elif link.attrib["type"] == "boardgameartist":
-    #                         version_boardgameartist.append([link.attrib["id"], link.attrib["value"]])
-    #                     elif link.attrib["type"] == "language":
-    #                         version_language.append([link.attrib["id"], link.attrib["value"]])
-    #             except:
-    #                 pass
-    #         if version_boardgameversion == "0":
-    #             version_boardgameversion = "undefined"
-    #         if version_boardgamepublisher == "0":
-    #             version_boardgamepublisher = "undefined"
-    #         if version_boardgameartist == "0":
-    #             version_boardgameartist = "undefined"
-    #         if version_language == "0":
-    #             version_language = "undefined"
-    #         versions[version_name] = {
-    #             "thumbnail": version_thumb,
-    #             "image": version_image,
-    #             "published": version_published,
-    #             "boardgameversion": version_boardgameversion,
-    #             "boardgamepublisher": version_boardgamepublisher,
-    #             "boardgameartist": version_boardgameartist,
-    #             "language": version_language
-    #         }
-    #     if len(versions) > 0:
-    #         return versions
-    #     else:
-    #         return "undefined"
-    #
-    # def make_marketplace(self) -> list or None:
-    #     root = self.root
-    #     marketplace = []
-    #     try:
-    #         for tree in root:
-    #             for leaf in tree:
-    #                 if leaf.tag == "marketplacelistings":
-    #                     for listing in leaf:
-    #                         marketplace.append(listing)
-    #     except:
-    #         return None
-    #     return marketplace
-    #
-    # @staticmethod
-    # def parse_marketplace(marketplace_raw: list) -> list or str:
-    #     listings = []
-    #     try:
-    #         for listing in marketplace_raw:
-    #             item = {}
-    #             for element in listing:
-    #                 if element.tag == "listdate":
-    #                     item["date"] = element.attrib["value"]
-    #                 elif element.tag == "price":
-    #                     item["price"] = element.attrib["value"] + " " + element.attrib["currency"]
-    #                 elif element.tag == "condition":
-    #                     item["condition"] = element.attrib["value"]
-    #                 elif element.tag == "notes":
-    #                     item["notes"] = element.attrib["value"]
-    #                 elif element.tag == "link":
-    #                     item["link"] = element.attrib["href"]
-    #             listings.append(item)
-    #         return listings
-    #     except:
-    #         return "undefined"
