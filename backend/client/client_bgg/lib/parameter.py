@@ -1,10 +1,10 @@
 class Parameter(object):
-    def __init__(self, name, *args):
+    def __init__(self, name, value):
         self.__name: str = name
-        if len(args) == 1:
-            self.__value: object = args[0]
+        if not isinstance(value, list):
+            self.__value = value
         else:
-            self.__value: object = args
+            self.__value = self.__concatenate_bgg_parameter_list(value)
 
     @property
     def name(self):
@@ -13,3 +13,12 @@ class Parameter(object):
     @property
     def value(self):
         return self.__value
+
+    @staticmethod
+    def __concatenate_bgg_parameter_list(values_list) -> str:
+        params_value = str(values_list[0])
+        for index in range(len(values_list)):
+            if index == 0:
+                continue
+            params_value += f", {str(values_list[index])}"
+        return params_value

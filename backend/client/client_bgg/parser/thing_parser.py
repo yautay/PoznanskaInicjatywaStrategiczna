@@ -1,36 +1,76 @@
 from pprint import pprint
 
 from client.client_bgg.parser.base_parser import Parser, ParserWrapper
+from client.client_bgg.parser.item_keys import ThingItemKeys as key
 
 
 class ThingParser(Parser, ParserWrapper):
     def parse_data(self, xml_data: str):
+        items = []
         root = self.get_root(xml_data)
         for item in root:
-            print(item.tag, item.attrib, item.text)
-        raise Exception
-        return xml_data
+            items.append({item.attrib["id"]: self.__parse_item(item)})
 
-    # def game(self):
-    #     return {
-    #         "name": self.get_name(),
-    #         "thumbnails": self.get_thumbnails(),
-    #         "images": self.get_images(),
-    #         "description": self.get_description(),
-    #         "published": self.get_published(),
-    #         "min_players": self.get_min_players(),
-    #         "max_players": self.get_max_players(),
-    #         "boardgame_categories": self.get_boardgame_categories(),
-    #         "boardgame_implementations": self.get_boardgame_implementations(),
-    #         "boardgame_mechanics": self.get_boardgame_mechanics(),
-    #         "boardgame_family": self.get_boardgame_family(),
-    #         "boardgame_expansions": self.get_boardgame_expansions(),
-    #         "boardgame_versions": self.versions,
-    #         "designers": self.get_designers(),
-    #         "artists": self.get_artists(),
-    #         "publishers": self.get_boardgame_publishers(),
-    #         "marketplace": self.get_marketplacelistings()
-    #     }
+        pprint(items)
+
+        raise Exception
+        return items
+
+    def __parse_item(self, item):
+        thing = ThingModel()
+        thing.data[key.NAME] = self.get_name(item)
+        thing.data[key.DESCRIPTION] = self.get_description(item)
+        thing.data[key.DESIGNERS] = self.get_designers(item)
+
+        return thing.data
+
+    @staticmethod
+    def get_name(item):
+        for element in item:
+            if element.tag == "name":
+                if element.attrib["type"] == "primary":
+                    return element.attrib["value"]
+
+    @staticmethod
+    def get_description(item):
+        for element in item:
+            if element.tag == "description":
+                return element.text
+
+    @staticmethod
+    def get_designers(item):
+        for element in item:
+            print(element.tag, element.attrib)
+            if element.tag == "gamedesigner":
+                print(element.attrib)
+
+class ThingModel(object):
+    def __init__(self):
+        self.__data = {
+            key.NAME: None,
+            key.DESCRIPTION: None,
+            key.PUBLISHED: None,
+            key.THUMBNAILS: None,
+            key.IMAGES: None,
+            key.MIN_PLAYERS: None,
+            key.MAX_PLAYERS: None,
+            key.DESIGNERS: None,
+            key.ARTISTS: None,
+            key.PUBLISHERS: None,
+            key.BOARDGAME_IMPLEMENTATIONS: None,
+            key.BOARDGAME_CATEGORIES: None,
+            key.BOARDGAME_MECHANICS: None,
+            key.BOARDGAME_FAMILY: None,
+            key.BOARDGAME_VERSIONS: None,
+            key.BOARDGAME_EXPANSIONS: None,
+            key.MARKETPLACE: None
+        }
+
+    @property
+    def data(self):
+        return self.__data
+
+
 
 
     # def get_boardgame_implementations(self) -> list or str:

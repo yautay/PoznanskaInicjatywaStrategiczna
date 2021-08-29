@@ -1,5 +1,4 @@
 import time
-
 import requests
 from client.client_bgg.model import *
 from client.client_bgg.parser import *
@@ -13,7 +12,7 @@ class InterfaceBgg:
         self.__parser = self.__get_parser()
 
     def get_response(self) -> bool:
-        self.__client.send_request(self.__bgg_object)
+        self.__client.send_request()
         if self.__client.html_code == 200:
             return True
         elif self.__client.html_code == 202:
@@ -21,7 +20,7 @@ class InterfaceBgg:
             while retry < 100:
                 time.sleep(5)
                 retry += 1
-                self.__client.send_request(self.__bgg_object)
+                self.__client.send_request()
                 if self.__client.html_code == 200:
                     return True
                 else:
@@ -46,10 +45,10 @@ class InterfaceBgg:
     class Response(object):
         def __init__(self, bgg_object):
             self.__response = None
-            bgg = bgg_object
+            self.__bgg = bgg_object
 
-        def send_request(self, bgg):
-            self.__response = requests.get(bgg.url, bgg.parameters())
+        def send_request(self):
+            self.__response = requests.get(self.__bgg.url, self.__bgg.parameters())
 
         @property
         def html_code(self):

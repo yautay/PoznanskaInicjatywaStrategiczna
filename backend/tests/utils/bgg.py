@@ -18,7 +18,7 @@ class TestWrapper:
 
     @staticmethod
     def get_things(**kwargs) -> Thing:
-        return Thing([10183, 9084, 113873], **kwargs)
+        return Thing([10183, 9084], **kwargs)
 
     @staticmethod
     def get_user():
