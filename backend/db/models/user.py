@@ -19,5 +19,5 @@ class User(Base):
     superuser = Column(Integer, default=False)
     created = Column(Date, default=datetime.datetime.now())
     is_active = Column(Integer, default=True)
-    article = relationship("Article", back_populates="user")
-    collection = relationship("Collection", back_populates="user")
+    article = relationship("Article")
+    collection = relationship("BggUserCollection")

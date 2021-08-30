@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from datetime import date
 from schemas.collections import CollectionCreate
-from db.models.bgg_user_collection import Collection
+from db.models.bgg_user_collection import BggUserCollection
 from db.models.user import User
 from client.bgg_client import BggClient
 from db.repository.games import synchronize_games
@@ -12,12 +12,12 @@ def synchronize_collection(data: CollectionCreate, db: Session, user_id: int) ->
         data.bgg_user = db.query(User).filter(User.id == user_id).first().bgg_user
     collection_new = BggClient().get_collection_by_user(data.bgg_user)
     game_indexes = []
-    db.query(Collection).filter(Collection.user_id == user_id).delete()
+    db.query(BggUserCollection).filter(BggUserCollection.user_id == user_id).delete()
     db.commit()
     # try:
     for key in collection_new.items.keys():
         game_indexes.append(key)
-        collection_item = Collection(
+        collection_item = BggUserCollection(
             updated=date.today(),
             user_id=user_id,
             game_index=key,

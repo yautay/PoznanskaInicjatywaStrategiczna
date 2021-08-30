@@ -25,7 +25,7 @@ class ParserWrapper:
             return None
 
     @staticmethod
-    def remove_duplicates_from_list(element: list[list]):
+    def remove_duplicates_from_list(element):
         tmp_ids = []
         cleaned_list = []
         for x in element:
