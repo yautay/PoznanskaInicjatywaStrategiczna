@@ -1,3 +1,4 @@
+import json
 from pprint import pprint
 
 from ..conftests import *
@@ -28,6 +29,7 @@ def test_thing_parser():
                          marketplace=1,
                          comments=1)
     client = BggClient(thing)
+    print(json.dumps(client.get_data()[0]))
     for element in client.get_data():
         assert element
 

@@ -14,7 +14,7 @@ from client.client_bgg.model.search import Search
 class TestWrapper:
     @staticmethod
     def get_thing(**kwargs) -> Thing:
-        return Thing(10183, **kwargs)
+        return Thing(135840, **kwargs)
 
     @staticmethod
     def get_things(**kwargs) -> Thing:

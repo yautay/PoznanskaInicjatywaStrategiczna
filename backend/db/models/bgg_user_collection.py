@@ -4,11 +4,11 @@ from sqlalchemy.orm import relationship
 from db.base_class import Base
 
 
-class Collection(Base):
+class BggUserCollection(Base):
     id = Column(Integer, primary_key=True, index=True)
     updated = Column(Date)
     user_id = Column(Integer, ForeignKey("user.id"))
-    game_index = Column(Integer, ForeignKey("game.index"))
+    game_index = Column(Integer, ForeignKey("bgg_game.index"))
     comment = Column(String)
     numplays = Column(Integer)
     fortrade = Column(Integer)
