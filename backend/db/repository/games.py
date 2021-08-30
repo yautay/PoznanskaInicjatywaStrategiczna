@@ -2,20 +2,16 @@ from typing import List
 
 from sqlalchemy.orm import Session
 from datetime import date
+
+from client.client_bgg.model import Thing
 from schemas.collections import CollectionCreate
 from db.models.bgg_user_collection import BggUserCollection
 from db.models.bgg_game import BggGame
 from db.models.user import User
 from client.bgg_client import BggClient
 
+
 def synchronize_games(db: Session, indexes: List[int]) -> bool:
-    games = BggClient().get_thing_by_id(indexes,
-                                        versions=1,
-                                        videos=1,
-                                        stats=1,
-                                        historical=1,
-                                        marketplace=1,
-                                        comments=1)
-
-
-    # return True
+    games = BggClient(Thing).get_data()
+    if games:
+        return True

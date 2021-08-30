@@ -4,7 +4,7 @@ from pydantic import BaseModel, AnyUrl
 
 
 class CollectionBase(BaseModel):
-    updated: Optional[date] = datetime.now().date()
+    collection_updated: Optional[date] = datetime.now().date()
     bgg_user: Optional[str] = None
 
 
@@ -15,7 +15,7 @@ class CollectionCreate(CollectionBase):
 class CollectionShow(BaseModel):
     id: int
     bgg_user: str
-    updated: date
+    collection_updated: date
 
     class Config:
         orm_mode = True

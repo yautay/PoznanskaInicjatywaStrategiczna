@@ -20,15 +20,15 @@ def test_retrieve_articles(db_session: Session):
 
 
 def test_retrieve_article_by_id(db_session: Session):
-    title = "test_title"
-    content = "content of article"
-    picture = "https://www.wp.pl/test.jpg"
+    article_title = "test_title"
+    article_content = "content of article"
+    article_picture = "https://www.wp.pl/test.jpg"
     user = create_random_user(db=db_session)
-    article_schema = ArticleCreate(title=title, content=content, picture=picture)
+    article_schema = ArticleCreate(article_title=article_title, article_content=article_content, article_picture=article_picture)
     article = create_new_article(article=article_schema, db=db_session, user_id=user.id)
     retrieved_article = retrieve_article_by_id(_id=article.id, db=db_session)
     assert retrieved_article.id == article.id
-    assert retrieved_article.title == title
+    assert retrieved_article.article_title == article_title
 
 
 def test_retrieve_articles_by_user(db_session: Session):

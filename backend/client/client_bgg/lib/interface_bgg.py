@@ -6,7 +6,6 @@ from client.client_bgg.parser import *
 
 class InterfaceBgg:
     def __init__(self, bgg_object):
-        assert isinstance(bgg_object, BaseModel)
         self.__bgg_object = bgg_object
         self.__client = self.Response(self.__bgg_object)
         self.__parser = self.__get_parser()
@@ -41,6 +40,8 @@ class InterfaceBgg:
     def get_data(self) -> dict or None:
         if self.get_response():
             return self.__parse_data()
+        return None
+
 
     class Response(object):
         def __init__(self, bgg_object):
