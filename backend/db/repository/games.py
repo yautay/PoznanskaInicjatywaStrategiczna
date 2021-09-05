@@ -75,15 +75,15 @@ class ORMWrapperAttributeTypes:
 
 
 class ORMWrapperAttributes:
-    def write_game_attributes_to_db(self, db: Session, data: dict) -> bool:
-        for k, v in data.items():
-            existing_attribute_type = db.query(BggGameAttributesTypes).filter(
-                BggGameAttributesTypes.attribute_type_index == k)
-            if not existing_attribute_type.first():
-                status = self.CRUD.add_attribute_type(db=db, index=k, name=v)
-            else:
-                status = self.CRUD.update_attribute_type(db=db, existing_row=existing_attribute_type, name=v)
-        return status
+    # def write_game_attributes_to_db(self, db: Session, data: dict) -> bool:
+    #     for k, v in data.items():
+    #         existing_attribute = db.query(BggGameAttributes).filter(
+    #             BggGameAttributes.id == k)
+    #         if not existing_attribute_type.first():
+    #             status = self.CRUD.add_attribute_type(db=db, index=k, name=v)
+    #         else:
+    #             status = self.CRUD.update_attribute_type(db=db, existing_row=existing_attribute_type, name=v)
+    #     return status
 
     class CRUD:
         @staticmethod
@@ -94,14 +94,18 @@ class ORMWrapperAttributes:
 
             def get_type():
                 if isinstance(attribute_type, int):
-                    return db.query(BggGameAttributesTypes).filter(BggGameAttributesTypes.attribute_type_index == attribute_type).first()
+                    attr = db.query(BggGameAttributesTypes).filter(BggGameAttributesTypes.attribute_type_index == attribute_type).first()
                 else:
-                    return db.query(BggGameAttributesTypes).filter(BggGameAttributesTypes.attribute_type_name == attribute_type).first()
+                    attr = db.query(BggGameAttributesTypes).filter(BggGameAttributesTypes.attribute_type_name == attribute_type).first()
+                if attr:
+                    return attr
+                else:
+                    return "undefined"
 
             def create_attribute_row():
                 row = BggGameAttributes()
                 row.game_index = game_index
-                row.attribute_type_index = attribute_type
+                row.attribute_type_index = get_type().attribute_type_index
                 row.attribute_bgg_index = bgg_attribute_index
                 row.attribute_bgg_value = bgg_attribute_value
                 return row
@@ -115,22 +119,16 @@ class ORMWrapperAttributes:
                 return False
 
         @staticmethod
-        def get_attribute(db: Session, attribute: int or str) -> dict:
-            if issubclass(attribute, int):
-                row = db.query(BggGameAttributesTypes).filter(
-                    BggGameAttributesTypes.attribute_type_index == attribute).first()
-            elif issubclass(attribute, str):
-                row = db.query(BggGameAttributesTypes).filter(
-                    BggGameAttributesTypes.attribute_type_name == attribute).first()
-            return {"attribute_id": row.attribute_type_index,
-                    "attribute_name": row.attribute_type_name}
-
-        @staticmethod
-        def update_attribute(db: Session, index: int, name: str) -> bool:
-            existing_data = db.query(BggGameAttributesTypes).filter(
-                BggGameAttributesTypes.attribute_type_index == index).first()
-            if existing_data.name != name:
-                existing_data.name = name
+        def update_attribute(db: Session,
+                             attribute_id: int,
+                             bgg_attribute_index: int,
+                             bgg_attribute_value: str
+                             game_index: int = None,
+                             attribute_type: int or str = None) -> bool:
+            existing_data = db.query(BggGameAttributes).filter(
+                BggGameAttributes.id == id).first()
+            if existing_data.attribute_bgg_value != name:
+                existing_data.attribute_bgg_value = name
                 try:
                     db.commit()
                     return True

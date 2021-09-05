@@ -3,9 +3,6 @@ from db.repository.games import BggGameAttributesTypes
 from db.repository.games import ORMWrapperAttributeTypes
 
 
-path_test_data = os.path.join(os.path.abspath(os.getcwd()), "tests", "utils", "test_data")
-
-
 def test_crud_attribute_types(db_session: Session):
     attribute_types = {
         12345: "test",
