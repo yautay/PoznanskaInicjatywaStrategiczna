@@ -49,8 +49,8 @@ class ORMWrapperAttributeTypes:
         def update_attribute_type(db: Session, index: int, name: str) -> bool:
             existing_data = db.query(BggGameAttributesTypes).filter(
                 BggGameAttributesTypes.attribute_type_index == index).first()
-            if existing_data.name != name:
-                existing_data.name = name
+            if existing_data.attribute_type_name != name:
+                existing_data.attribute_type_name = name
                 try:
                     db.commit()
                     return True
@@ -60,10 +60,10 @@ class ORMWrapperAttributeTypes:
 
         @staticmethod
         def delete_attribute_type(db: Session, attribute: int or str) -> bool:
-            if issubclass(attribute, int):
+            if isinstance(attribute, int):
                 row = db.query(BggGameAttributesTypes).filter(
                     BggGameAttributesTypes.attribute_type_index == attribute).first()
-            elif issubclass(attribute, str):
+            elif isinstance(attribute, str):
                 row = db.query(BggGameAttributesTypes).filter(
                     BggGameAttributesTypes.attribute_type_name == attribute).first()
             try:
