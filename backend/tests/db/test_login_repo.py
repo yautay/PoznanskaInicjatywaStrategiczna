@@ -1,9 +1,6 @@
-from pprint import pprint
-
 from ..conftests import *
 from sqlalchemy.orm import Session
 from db.repository.login import get_user_by_login_or_email
-from schemas.users import UserCreate
 from tests.utils.user import \
     create_random_user, \
     create_test_users, \
