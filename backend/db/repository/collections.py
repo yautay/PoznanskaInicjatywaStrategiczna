@@ -4,79 +4,79 @@ from datetime import datetime
 from db.models.bgg_user_collection import BggUserCollection
 
 
-def write_collection_to_db(db: Session, user_id: int, bgg_data: dict) -> bool:
-    for k, v in bgg_data.items():
-        existing_collection_item = db.query(BggUserCollection).filter(BggUserCollection.game_index == k)
-        if not existing_collection_item.first():
-            status = add_collection_row(db=db, game_index=k, game_data=v, user_id=user_id)
-        else:
-            status = update_collection_row(db=db, existing_row=existing_collection_item, item_data=v)
-    return status
+class ORMWrapperCollections:
+    @staticmethod
+    def write_collection_to_db(db: Session, user_id: int, bgg_data: dict) -> bool:
+        for k, v in bgg_data.items():
+            existing_collection_item = db.query(BggUserCollection).filter(BggUserCollection.game_index == k)
+            if not existing_collection_item.first():
+                status = CRUD.add_collection_row(db=db, game_index=k, game_data=v, user_id=user_id)
+            else:
+                status = CRUD.update_collection_row(db=db, existing_row=existing_collection_item, item_data=v)
+        return status
 
+    class CRUD:
+        @staticmethod
+        def add_collection_row(db: Session, game_index: int, game_data: dict, user_id: int) -> bool:
+            def create_row():
+                row = BggUserCollection()
+                row.collection_updated = datetime.now()
+                row.user_id = user_id
+                row.game_index = game_index
+                row.collection_numplays = game_data["numplays"]
+                row.collection_fortrade = game_data["status"]["fortrade"]
+                row.collection_preordered = game_data["status"]["preordered"]
+                row.collection_prevowned = game_data["status"]["prevowned"]
+                row.collection_want = game_data["status"]["want"]
+                row.collection_wanttobuy = game_data["status"]["wanttobuy"]
+                row.collection_wanttoplay = game_data["status"]["wanttoplay"]
+                row.collection_wishlist = game_data["status"]["wishlist"]
+                row.collection_lastmodified = datetime.strptime(game_data["status"]["lastmodified"],
+                                                                "%Y-%m-%d %H:%M:%S")
+                if "comment" in game_data.keys():
+                    row.collection_comment = game_data["comment"]
+                else:
+                    row.collection_comment = "undefined"
+                return row
+            row = create_row()
+            try:
+                db.add(row)
+                db.commit()
+                return True
+            except:
+                return False
 
-def add_collection_row(db: Session, game_index: int, game_data: dict, user_id: int) -> bool:
-    row = create_row(user_id, game_index, game_data)
-    try:
-        db.add(row)
-        db.commit()
-        return True
-    except:
-        return False
+        @staticmethod
+        def update_collection_row(db: Session, existing_row, item_data: dict) -> bool:
+            existing_data = existing_row.first()
+            existing_data.collection_updated = datetime.now()
+            existing_data.collection_numplays = item_data["numplays"]
+            existing_data.collection_fortrade = item_data["status"]["fortrade"]
+            existing_data.collection_preordered = item_data["status"]["fortrade"]
+            existing_data.collection_prevowned = item_data["status"]["fortrade"]
+            existing_data.collection_want = item_data["status"]["fortrade"]
+            existing_data.collection_wanttobuy = item_data["status"]["fortrade"]
+            existing_data.collection_wanttoplay = item_data["status"]["fortrade"]
+            existing_data.collection_wishlist = item_data["status"]["fortrade"]
+            existing_data.collection_lastmodified = datetime.strptime(item_data["status"]["lastmodified"], "%Y-%m-%d %H:%M:%S")
+            if "comment" in item_data.keys():
+                existing_data.collection_comment = item_data["comment"]
+            else:
+                existing_data.collection_comment = "undefined"
+            try:
+                db.commit()
+                return True
+            except:
+                return False
 
-
-def update_collection_row(db: Session, existing_row, item_data: dict) -> bool:
-    existing_data = existing_row.first()
-    existing_data.collection_updated = datetime.now()
-    existing_data.collection_numplays = item_data["numplays"]
-    existing_data.collection_fortrade = item_data["status"]["fortrade"]
-    existing_data.collection_preordered = item_data["status"]["fortrade"]
-    existing_data.collection_prevowned = item_data["status"]["fortrade"]
-    existing_data.collection_want = item_data["status"]["fortrade"]
-    existing_data.collection_wanttobuy = item_data["status"]["fortrade"]
-    existing_data.collection_wanttoplay = item_data["status"]["fortrade"]
-    existing_data.collection_wishlist = item_data["status"]["fortrade"]
-    existing_data.collection_lastmodified = datetime.strptime(item_data["status"]["lastmodified"], "%Y-%m-%d %H:%M:%S")
-    if "comment" in item_data.keys():
-        existing_data.collection_comment = item_data["comment"]
-    else:
-        existing_data.collection_comment = "undefined"
-    try:
-        db.commit()
-        return True
-    except:
-        return False
-
-
-def delete_collection_row(db: Session, existing_row) -> bool:
-    existing_data = existing_row.first()
-    try:
-        db.delete(existing_row)
-        db.commit()
-        return True
-    except:
-        return False
-
-
-def create_row(user_id, game_index, game_data):
-    row = BggUserCollection()
-    row.collection_updated = datetime.now()
-    row.user_id = user_id
-    row.game_index = game_index
-    row.collection_numplays = game_data["numplays"]
-    row.collection_fortrade = game_data["status"]["fortrade"]
-    row.collection_preordered = game_data["status"]["preordered"]
-    row.collection_prevowned = game_data["status"]["prevowned"]
-    row.collection_want = game_data["status"]["want"]
-    row.collection_wanttobuy = game_data["status"]["wanttobuy"]
-    row.collection_wanttoplay = game_data["status"]["wanttoplay"]
-    row.collection_wishlist = game_data["status"]["wishlist"]
-    row.collection_lastmodified = datetime.strptime(game_data["status"]["lastmodified"], "%Y-%m-%d %H:%M:%S")
-    if "comment" in game_data.keys():
-        row.collection_comment = game_data["comment"]
-    else:
-        row.collection_comment = "undefined"
-    return row
-
+        @staticmethod
+        def delete_collection_row(db: Session, existing_row) -> bool:
+            try:
+                db.delete(existing_row)
+                db.commit()
+                return True
+            except:
+                return False
 
 # def synchronize_collection(data: CollectionCreate, db: Session, user_id: int) -> bool:
 #     if not data.bgg_user:
