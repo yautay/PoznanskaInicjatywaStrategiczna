@@ -5,14 +5,13 @@ from db.models.bgg_user_collection import BggUserCollection
 
 
 class ORMWrapperCollections:
-    @staticmethod
-    def write_collection_to_db(db: Session, user_id: int, bgg_data: dict) -> bool:
+    def write_collection_to_db(self, db: Session, user_id: int, bgg_data: dict) -> bool:
         for k, v in bgg_data.items():
             existing_collection_item = db.query(BggUserCollection).filter(BggUserCollection.game_index == k)
             if not existing_collection_item.first():
-                status = CRUD.add_collection_row(db=db, game_index=k, game_data=v, user_id=user_id)
+                status = self.CRUD.add_collection_row(db=db, game_index=k, game_data=v, user_id=user_id)
             else:
-                status = CRUD.update_collection_row(db=db, existing_row=existing_collection_item, item_data=v)
+                status = self.CRUD.update_collection_row(db=db, existing_row=existing_collection_item, item_data=v)
         return status
 
     class CRUD:
