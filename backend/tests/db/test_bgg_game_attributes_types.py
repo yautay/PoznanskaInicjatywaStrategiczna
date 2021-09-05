@@ -1,3 +1,5 @@
+import unittest
+
 from ..conftests import *
 from db.repository.games import BggGameAttributesTypes
 from db.repository.games import ORMWrapperAttributeTypes
