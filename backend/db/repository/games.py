@@ -9,6 +9,51 @@ from db.models.bgg_game_attributes import BggGameAttributes
 from db.models.bgg_game_attributes_types import BggGameAttributesTypes
 
 
+
+class ORMWrapperGameCRUD(object):
+    def __init__(self, db: Session):
+        self.db = db
+
+    def add_game(self, data: dict):
+        db = self.db
+
+        def check_schema():
+            data_schema = Schema({
+                Use(int): {
+                    "game_name": And(Use(str)),
+                    "game_description": And(Use(str)),
+                    "game_published": And(Use(datetime)),
+                    "game_thumbnails": And(Use(str)),
+                    "game_images": And(Use(str)),
+                    "game_min_players": And(Use(int)),
+                    "game_max_players": And(Use(int)),
+                }
+                })
+            try:
+                data_schema.validate(data)
+                return True
+            except SchemaError:
+                return False
+
+        if not check_schema():
+            return False
+
+
+    def update_game(self):
+        pass
+
+    def delete_game(self):
+        pass
+
+    def get_game_by_bgg_index(self):
+        pass
+
+class ORMWrapperGame(ORMWrapperGameCRUD):
+    def __init__(self, db: Session):
+        super().__init__(db)
+
+
+
 class ORMWrapperAttributeTypesCRUD(object):
     def __init__(self, db: Session):
         self.db = db
@@ -218,6 +263,8 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                 return True
             except SchemaError:
                 return False
+        if not check_schema():
+            return False
         for k, v in data.items():
             existing_attribute = self.db.query(BggGameAttributes).filter(
                 BggGameAttributes.id == k)
