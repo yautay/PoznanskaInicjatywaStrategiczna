@@ -1,13 +1,12 @@
+import datetime
 from typing import List
 from schema import Schema, And, Use, Optional, SchemaError
 
 from sqlalchemy.orm import Session
-from datetime import datetime
 
 from db.models.bgg_game import BggGame
 from db.models.bgg_game_attributes import BggGameAttributes
 from db.models.bgg_game_attributes_types import BggGameAttributesTypes
-
 
 
 class ORMWrapperGameCRUD(object):
@@ -22,13 +21,13 @@ class ORMWrapperGameCRUD(object):
                 Use(int): {
                     "game_name": And(Use(str)),
                     "game_description": And(Use(str)),
-                    "game_published": And(Use(datetime)),
+                    "game_published": And(Use(str)),
                     "game_thumbnails": And(Use(str)),
                     "game_images": And(Use(str)),
                     "game_min_players": And(Use(int)),
                     "game_max_players": And(Use(int)),
                 }
-                })
+            })
             try:
                 data_schema.validate(data)
                 return True
@@ -38,20 +37,106 @@ class ORMWrapperGameCRUD(object):
         if not check_schema():
             return False
 
+        def create_row():
+            row = BggGame()
+            for k, v in data.items():
+                row.game_index = k
+                row.game_description = v["game_description"]
+                row.game_name = v["game_name"]
+                row.game_published = datetime.date.fromisoformat(v["game_published"])
+                row.game_thumbnails = v["game_thumbnails"]
+                row.game_images = v["game_images"]
+                row.game_min_players = v["game_min_players"]
+                row.game_max_players = v["game_max_players"]
+            return row
 
-    def update_game(self):
-        pass
+        try:
+            db.add(create_row())
+            db.commit()
+            return True
+        except:
+            return False
+
+    def update_game(self, data: dict):
+        db = self.db
+
+        def check_schema():
+            data_schema = Schema({
+                Use(int): {
+                    Optional("game_name"): (Use(str)),
+                    Optional("game_description"): (Use(str)),
+                    Optional("game_published"): (Use(str)),
+                    Optional("game_thumbnails"): (Use(str)),
+                    Optional("game_images"): (Use(str)),
+                    Optional("game_min_players"): (Use(int)),
+                    Optional("game_max_players"): (Use(int)),
+                }
+            })
+            try:
+                data_schema.validate(data)
+                return True
+            except SchemaError:
+                return False
+
+        if not check_schema():
+            return False
+
+        def update_row():
+            for k in data.keys():
+                row = db.query(BggGame).filter(BggGame.game_index == k).first()
+                for k2, v in data[k].items():
+                    if "game_name" == k2:
+                        row.game_name = v
+                    elif "game_description" == k2:
+                        row.game_description = v
+                    elif "game_published" == k2:
+                        row.game_published = datetime.date.fromisoformat(v)
+                    elif "game_thumbnails" == k2:
+                        row.game_thumbnails = v
+                    elif "game_min_players" == k2:
+                        row.game_min_players = v
+                    elif "game_max_players" == k2:
+                        row.game_max_players = v
+                return row
+
+        try:
+            update_row()
+            db.commit()
+            return True
+        except:
+            return False
 
     def delete_game(self):
         pass
 
-    def get_game_by_bgg_index(self):
-        pass
+    def get_game_by_bgg_index(self, game_index: int) -> dict:
+        db = self.db
+        game = db.query(BggGame).filter(BggGame.game_index == game_index).first()
+        return self.__instance_to_json(game)
+
+    def get_game_by_bgg_id(self, db_game_id: int) -> dict:
+        db = self.db
+        game = db.query(BggGame).filter(BggGame.id == db_game_id).first()
+        return self.__instance_to_json(game)
+
+    @staticmethod
+    def __instance_to_json(instance: BggGame):
+        return {
+            "game_id": instance.id,
+            "game_index": instance.game_index,
+            "game_name": instance.game_name,
+            "game_description": instance.game_description,
+            "game_published": instance.game_published,
+            "game_thumbnails": instance.game_thumbnails,
+            "game_images": instance.game_images,
+            "game_min_players": instance.game_min_players,
+            "game_max_players": instance.game_max_players
+        }
+
 
 class ORMWrapperGame(ORMWrapperGameCRUD):
     def __init__(self, db: Session):
         super().__init__(db)
-
 
 
 class ORMWrapperAttributeTypesCRUD(object):
@@ -235,7 +320,7 @@ class ORMWrapperAttributesCRUD(object):
             return False
 
     @staticmethod
-    def __instance_to_json(instance):
+    def __instance_to_json(instance: BggGameAttributes) -> dict:
         return {
             "id": instance.id,
             "game_index": instance.game_index,

@@ -15,3 +15,7 @@ def random_date():
     int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
     random_second = randrange(int_delta)
     return (d1 + timedelta(seconds=random_second)).strftime('%Y-%m-%d')
+
+
+def random_index(k: int) -> int:
+    return random.randint(10000, 99999)
