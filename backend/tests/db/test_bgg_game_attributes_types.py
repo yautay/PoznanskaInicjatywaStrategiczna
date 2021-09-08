@@ -12,7 +12,7 @@ def test_crud_attribute_types(db_session: Session):
         98764: "test3"
     }
     db = ORMWrapperAttributeTypes(db_session)
-    db.write_game_attribute_types_to_db(attribute_types)
+    db.write_game_attributes_types_to_db(attribute_types)
     db.delete_attribute_type("test3")
     db.update_attribute_type(54321, "changed")
     get_test_attributes = db_session.query(BggGameAttributesTypes)
@@ -27,7 +27,7 @@ def test_add_attribute_types(db_session: Session):
         98764: "test3"
     }
     db = ORMWrapperAttributeTypes(db_session)
-    db.write_game_attribute_types_to_db(attribute_types)
+    db.write_game_attributes_types_to_db(attribute_types)
     get_test_attributes = db_session.query(BggGameAttributesTypes)
     assert len(get_test_attributes.all()) == 3
     assert get_test_attributes.all()[1].attribute_type_name == "test2"

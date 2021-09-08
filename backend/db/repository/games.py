@@ -106,18 +106,39 @@ class ORMWrapperGameCRUD(object):
         except:
             return False
 
-    def delete_game(self):
-        pass
-
-    def get_game_by_bgg_index(self, game_index: int) -> dict:
+    def delete_game_by_bgg_index(self, game_index: int) -> bool:
         db = self.db
-        game = db.query(BggGame).filter(BggGame.game_index == game_index).first()
-        return self.__instance_to_json(game)
+        try:
+            db.delete(db.query(BggGame).filter(BggGame.game_index).first())
+            db.commit()
+            return True
+        except:
+            return False
 
-    def get_game_by_bgg_id(self, db_game_id: int) -> dict:
+    def delete_game_by_id(self, game_id: int) -> bool:
         db = self.db
-        game = db.query(BggGame).filter(BggGame.id == db_game_id).first()
-        return self.__instance_to_json(game)
+        try:
+           db.delete(db.query(BggGame).filter(BggGame.id).first())
+           db.commit()
+           return True
+        except:
+            return False
+
+    def get_game_by_bgg_index(self, game_index: int) -> dict or None:
+        db = self.db
+        try:
+            game = db.query(BggGame).filter(BggGame.game_index == game_index).first()
+            return self.__instance_to_json(game)
+        except:
+            return None
+
+    def get_game_by_id(self, game_id: int) -> dict or None:
+        db = self.db
+        try:
+            game = db.query(BggGame).filter(BggGame.id == game_id).first()
+            return self.__instance_to_json(game)
+        except:
+            return None
 
     @staticmethod
     def __instance_to_json(instance: BggGame):
@@ -137,6 +158,35 @@ class ORMWrapperGameCRUD(object):
 class ORMWrapperGame(ORMWrapperGameCRUD):
     def __init__(self, db: Session):
         super().__init__(db)
+
+    def write_games_to_db(self, data: dict) -> bool:
+        def check_schema():
+            data_schema = Schema({
+                Use(int): {
+                    "game_name": And(Use(str)),
+                    "game_description": And(Use(str)),
+                    "game_published": And(Use(str)),
+                    "game_thumbnails": And(Use(str)),
+                    "game_images": And(Use(str)),
+                    "game_min_players": And(Use(str)),
+                    "game_max_players": And(Use(str)),
+                }})
+            try:
+                data_schema.validate(data)
+                return True
+            except SchemaError:
+                return False
+        if not check_schema():
+            return False
+        db = self.db
+        for k, v in data.items():
+            game = {k: v}
+            existing_game = db.query(BggGame).filter(BggGame.game_index == k)
+            if not existing_game.first():
+                status = self.add_game(game)
+            else:
+                status = self.update_game(game)
+        return status
 
 
 class ORMWrapperAttributeTypesCRUD(object):
@@ -206,7 +256,7 @@ class ORMWrapperAttributeTypes(ORMWrapperAttributeTypesCRUD):
     def __init__(self, db: Session):
         super().__init__(db)
 
-    def write_game_attribute_types_to_db(self, data: dict) -> bool:
+    def write_game_attributes_types_to_db(self, data: dict) -> bool:
         def check_schema():
             data_schema = Schema({
                 Use(int): And(Use(str))
@@ -216,19 +266,18 @@ class ORMWrapperAttributeTypes(ORMWrapperAttributeTypesCRUD):
                 return True
             except SchemaError:
                 return False
-        if check_schema():
-            db = self.db
-            for k, v in data.items():
-                existing_attribute_type = db.query(BggGameAttributesTypes)\
-                    .filter(BggGameAttributesTypes.attribute_type_index == k)
-                if not existing_attribute_type.first():
-                    status = self.add_attribute_type(attribute_type_index=k, attribute_type_name=v)
-                else:
-                    status = self.update_attribute_type(attribute_type_index=existing_attribute_type,
-                                                        attribute_type_name=v)
-            return status
-        else:
+        if not check_schema():
             return False
+        db = self.db
+        for k, v in data.items():
+            existing_attribute_type = db.query(BggGameAttributesTypes)\
+                .filter(BggGameAttributesTypes.attribute_type_index == k)
+            if not existing_attribute_type.first():
+                status = self.add_attribute_type(attribute_type_index=k, attribute_type_name=v)
+            else:
+                status = self.update_attribute_type(attribute_type_index=existing_attribute_type,
+                                                    attribute_type_name=v)
+        return status
 
 
 class ORMWrapperAttributesCRUD(object):

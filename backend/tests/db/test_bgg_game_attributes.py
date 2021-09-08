@@ -76,4 +76,4 @@ def add_test_attributes_types(db):
         2: "beta",
         3: "gama"
     }
-    ORMWrapperAttributeTypes(db).write_game_attribute_types_to_db(attribute_types)
+    ORMWrapperAttributeTypes(db).write_game_attributes_types_to_db(attribute_types)
