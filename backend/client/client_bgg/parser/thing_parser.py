@@ -3,14 +3,14 @@ from client.client_bgg.parser.item_keys import ThingItemKeys as key
 
 
 class ThingParser(Parser, ParserWrapper):
-    def parse_data(self, xml_data: str):
-        items = []
+    def parse_data(self, xml_data: str) -> dict:
+        items = {}
         root = self.get_root(xml_data)
         for item in root:
-            items.append({item.attrib["id"]: self.parse_item(item)})
+            items[item.attrib["id"]] = self.parse_item(item)
         return items
 
-    def parse_item(self, item):
+    def parse_item(self, item) -> dict:
         thing = ThingModel()
         thing.data[key.NAME] = self.get_boardgame_name(item)
         thing.data[key.DESCRIPTION] = self.get_boardgame_description(item)
