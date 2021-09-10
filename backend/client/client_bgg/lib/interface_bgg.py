@@ -42,7 +42,6 @@ class InterfaceBgg:
             return self.__parse_data()
         return None
 
-
     class Response(object):
         def __init__(self, bgg_object):
             self.__response = None
