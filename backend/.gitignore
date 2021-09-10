@@ -4,6 +4,5 @@ __pycache__
 .idea
 test_db.db
 sql_app.db
-/htmlcov/
 /.pytest_cache/
 /.coverage
