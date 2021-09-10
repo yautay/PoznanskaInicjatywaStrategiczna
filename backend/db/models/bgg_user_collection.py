@@ -8,7 +8,7 @@ class BggUserCollection(Base):
     id = Column(Integer, primary_key=True, index=True)
     collection_updated = Column(DateTime)
     user_id = Column(Integer, ForeignKey("user.id"))
-    game_index = Column(Integer, ForeignKey("bgggame.game_index"))
+    game_index = Column(Integer)
     collection_comment = Column(String)
     collection_numplays = Column(Integer)
     collection_fortrade = Column(Integer)

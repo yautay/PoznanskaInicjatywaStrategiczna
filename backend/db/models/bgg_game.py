@@ -14,5 +14,4 @@ class BggGame(Base):
     game_images = Column(String(2000))
     game_min_players = Column(Integer)
     game_max_players = Column(Integer)
-    game_collection = relationship("BggUserCollection")
     game_attribute = relationship("BggGameAttributes")

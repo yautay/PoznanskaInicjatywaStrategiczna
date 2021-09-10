@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 from db.base import Base
-from alembic.models import Models
+from db.alembic.models import *
 
 # uncomment for PostgreSQL
 # from core.config import settings
