@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, Integer, ForeignKey, String, JSON
 from db.base_class import Base
 
 
@@ -8,3 +8,4 @@ class BggGameAttributes(Base):
     attribute_type_index = Column(Integer)
     attribute_bgg_index = Column(Integer, index=True)
     attribute_bgg_value = Column(String(250))
+    attribute_bgg_json = Column(JSON)

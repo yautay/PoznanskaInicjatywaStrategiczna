@@ -110,7 +110,10 @@ class ThingParser(Parser, ParserWrapper):
             if element.tag == "versions":
                 for version in element:
                     vesions[version.attrib["id"]] = self.parse_version(version)
-        return vesions
+        if vesions:
+            return vesions
+        else:
+            return None
 
     def parse_version(self, version):
         data = {"name": self.link_extractor(version, "boardgameversion"),
@@ -133,7 +136,10 @@ class ThingParser(Parser, ParserWrapper):
             if element.tag == "marketplacelistings":
                 for offer in element:
                     market.append(self.parse_offer(offer))
-        return market
+        if market:
+            return market
+        else:
+            return None
 
     @staticmethod
     def parse_offer(offer):

@@ -1,6 +1,7 @@
 import datetime
 from typing import List
 from schema import Schema, And, Use, Optional, SchemaError
+from sqlalchemy import JSON
 
 from sqlalchemy.orm import Session
 
@@ -288,7 +289,8 @@ class ORMWrapperAttributesCRUD(object):
                       game_index: int,
                       attribute_type: int or str,
                       attribute_bgg_index: int,
-                      attribute_bgg_value: str) -> bool:
+                      attribute_bgg_value: str,
+                      attribute_bgg_json: JSON) -> bool:
         db = self.db
 
         def get_type():
@@ -309,6 +311,7 @@ class ORMWrapperAttributesCRUD(object):
             row.attribute_type_index = get_type().attribute_type_index
             row.attribute_bgg_index = attribute_bgg_index
             row.attribute_bgg_value = attribute_bgg_value
+            row.attribute_bgg_json = attribute_bgg_json
             return row
 
         row = create_attribute_row()
@@ -341,7 +344,8 @@ class ORMWrapperAttributesCRUD(object):
     def update_attribute(self,
                          attribute_id: int,
                          attribute_bgg_index: int,
-                         attribute_bgg_value: str) -> bool:
+                         attribute_bgg_value: str,
+                         attribute_bgg_json: JSON) -> bool:
         db = self.db
         existing_data = db.query(BggGameAttributes).filter(
             BggGameAttributes.id == attribute_id).first()
@@ -375,7 +379,8 @@ class ORMWrapperAttributesCRUD(object):
             "game_index": instance.game_index,
             "attribute_type_index": instance.attribute_type_index,
             "attribute_bgg_index": instance.attribute_bgg_index,
-            "attribute_bgg_value": instance.attribute_bgg_value
+            "attribute_bgg_value": instance.attribute_bgg_value,
+            "attribute_bgg_json": instance.attribute_bgg_json
         }
 
 
@@ -390,7 +395,8 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                 Use(int): {
                     "type_index": And(Use(str)),
                     "bgg_index": And(Use(str)),
-                    "bgg_value": And(Use(str))
+                    "bgg_value": And(Use(str)),
+                    "attribute_bgg_json": And(Use(str))
                 }})
             try:
                 data_schema.validate(data)
@@ -406,9 +412,12 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                 status = self.add_attribute(game_index=k,
                                             attribute_type=v["type_index"],
                                             attribute_bgg_index=v["bgg_index"],
-                                            attribute_bgg_value=v["bgg_value"])
+                                            attribute_bgg_value=v["bgg_value"],
+                                            attribute_bgg_json=v["bgg_json"])
             else:
+                #TODO dodać validację czy nie nadpisujemy różnych atrybutów
                 status = self.update_attribute(attribute_id=k,
                                                attribute_bgg_index=v["bgg_index"],
-                                               attribute_bgg_value=v["bgg_value"])
+                                               attribute_bgg_value=v["bgg_value"],
+                                               attribute_bgg_json=v["bgg_json"])
         return status
