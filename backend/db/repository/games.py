@@ -292,16 +292,13 @@ class ORMWrapperAttributesCRUD(object):
                       attribute_bgg_index: int or None,
                       attribute_bgg_value: str or None,
                       attribute_bgg_json: dict or None = None) -> bool:
-
-        attribute_bgg_json_id: int or None = None
-        attribute_bgg_id: int or None = None
         db = self.db
 
         def create_bgg_attribute() -> BggAttributes:
             row = BggAttributes()
             row.attribute_bgg_index = attribute_bgg_index
             row.attribute_bgg_value = attribute_bgg_value
-            row.attribute_bgg_json = attribute_bgg_json_id
+            row.attribute_bgg_json = attribute_bgg_json
             return row
 
         def create_game_attribute_row(attribute_id: int) -> BggGameAttributes:
@@ -313,32 +310,12 @@ class ORMWrapperAttributesCRUD(object):
 
         bgg_attribute = create_bgg_attribute()
         try:
-            existing_attribute_bgg_id: BggAttributes = db.query(BggAttributes) \
-                .filter(and_(BggAttributes.attribute_bgg_json == bgg_attribute.attribute_bgg_json,
-                             BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value,
-                             BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first()
-            updatable_attribute_bgg_id: BggAttributes = db.query(BggAttributes)\
-                .filter(and_(or_(not_(BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value),
-                                 not_(BggAttributes.attribute_bgg_json == bgg_attribute.attribute_bgg_json)),
-                             BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first()
-            if existing_attribute_bgg_id:
-                attribute_bgg_id = existing_attribute_bgg_id.id
-            elif updatable_attribute_bgg_id:
-                self.update_attribute(updatable_attribute_bgg_id.id,
-                                      attribute_bgg_index=attribute_bgg_index,
-                                      attribute_bgg_value=attribute_bgg_value,
-                                      attribute_bgg_json=attribute_bgg_json)
-            else:
-                db.add(bgg_attribute)
-                db.commit()
-                attribute_bgg_id = db.query(BggAttributes) \
-                    .filter(and_(BggAttributes.attribute_bgg_json == bgg_attribute.attribute_bgg_json,
-                                 BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value,
-                                 BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first().id
+            db.add(bgg_attribute)
+            db.commit()
         except:
             return False
 
-        game_attribute = create_game_attribute_row(attribute_bgg_id)
+        game_attribute = create_game_attribute_row(bgg_attribute.id)
         try:
             db.add(game_attribute)
             db.commit()
@@ -358,8 +335,6 @@ class ORMWrapperAttributesCRUD(object):
                 BggGameAttributes.id == attribute_id).first()
             existing_bgg_attribute: BggAttributes = db.query(BggAttributes) \
                 .filter(BggAttributes.id == existing_game_attribute.id).first()
-            existing_bgg_attribute_json: BggAttributesJson = db.query(BggAttributesJson) \
-                .filter(BggAttributesJson.id == existing_bgg_attribute.attribute_bgg_json).first()
 
             if existing_bgg_attribute.attribute_bgg_index != attribute_bgg_index:
                 existing_bgg_attribute.attribute_bgg_index = attribute_bgg_index
@@ -368,8 +343,8 @@ class ORMWrapperAttributesCRUD(object):
                 existing_bgg_attribute.attribute_bgg_value = attribute_bgg_value
                 changed = True
             if attribute_bgg_json:
-                if existing_bgg_attribute_json.attribute_bgg_json != attribute_bgg_json:
-                    existing_bgg_attribute_json.attribute_bgg_json = attribute_bgg_json
+                if existing_bgg_attribute.attribute_bgg_json != attribute_bgg_json:
+                    existing_bgg_attribute.attribute_bgg_json = attribute_bgg_json
                     changed = True
             if changed:
                 db.commit()
@@ -411,17 +386,13 @@ class ORMWrapperAttributesCRUD(object):
     @staticmethod
     def __instance_to_json(instance: BggGameAttributes, db: Session) -> dict:
         bgg_attribute: BggAttributes = db.query(BggAttributes).filter(BggAttributes.id == instance.attribute).first()
-        bgg_attribute_json: str or None = None
-        if bgg_attribute.attribute_bgg_json:
-            bgg_attribute_json = db.query(BggAttributesJson)\
-                .filter(BggAttributesJson.id == bgg_attribute.attribute_bgg_json).first().attribute_bgg_json
         return {
             "id": instance.id,
             "game_index": instance.game_index,
             "attribute_type_index": instance.attribute_type_index,
             "attribute_bgg_index": bgg_attribute.attribute_bgg_index,
             "attribute_bgg_value": bgg_attribute.attribute_bgg_value,
-            "attribute_bgg_json": bgg_attribute_json
+            "attribute_bgg_json": bgg_attribute.attribute_bgg_json
         }
 
 
@@ -455,4 +426,23 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                                               attribute_bgg_json=v["bgg_json"])
                 if not instance:
                     return False
+        return True
+
+    def delete_attributes_by_game_index(self, game_index: list) -> bool:
+        db = self.db
+
+        def delete_game_attribs(game_i: int) -> bool:
+            try:
+                attributes: List[BggAttributes] = db.query(BggGameAttributes)\
+                    .filter(BggGameAttributes.game_index == game_i).all()
+                for attribute in attributes:
+                    db.delete(attribute)
+                db.commit()
+                return True
+            except:
+                return False
+        for game in game_index:
+            x = delete_game_attribs(game)
+            if not x:
+                return False
         return True

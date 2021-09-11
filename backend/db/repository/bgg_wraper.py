@@ -32,6 +32,8 @@ class BggWrapper(ORMWrapperCollection, ORMWrapperGame, ORMWrapperAttributes):
         db = ORMWrapperAttributes(self.db)
         data = []
         for game_index, v in games_attributes_db_dict.items():
+            if not db.delete_attributes_by_game_index([game_index]):
+                return False
             for attribute_type, attributes in v.items():
                 if attribute_type in [1, 2, 3, 4, 5, 6, 7, 9]:
                     if attributes:
