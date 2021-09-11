@@ -20,7 +20,8 @@ class BggWrapper(ORMWrapperCollection, ORMWrapperGame, ORMWrapperAttributes):
             if user_games:
                 games_db_dict = self.__prepare_games_data(user_games)
                 games_attributes_db_dict = self.__prepare_games_attributes_data(user_games)
-                self.__add_attributes_to_db(games_attributes_db_dict)
+                if not self.__add_attributes_to_db(games_attributes_db_dict):
+                    return False
             else:
                 return False
         else:
@@ -29,21 +30,32 @@ class BggWrapper(ORMWrapperCollection, ORMWrapperGame, ORMWrapperAttributes):
 
     def __add_attributes_to_db(self, games_attributes_db_dict: dict) -> bool:
         db = ORMWrapperAttributes(self.db)
+        data = []
         for game_index, v in games_attributes_db_dict.items():
-
-            for attr_type, v2 in v.items():
-                if attr_type in [1, 2, 3, 5, 6, 7]:
-                    #TODO TERA
-                print("K", game_index, "K2", k2,"V2", v2)
-                db.write_attributes_to_db(games_attributes_db_dict)
-                print(v2)
-
-    # "type_index": And(Use(str)),
-    # "bgg_index": And(Use(str)),
-    # "bgg_value": And(Use(str))
-    # "bgg_json": Or({object: object}, None)
-    # 1[['71', 'Rodger B. MacGowan'], ['11856', 'Mark Mahaffey']]
-
+            for attribute_type, attributes in v.items():
+                if attribute_type in [1, 2, 3, 4, 5, 6, 7, 9]:
+                    if attributes:
+                        for attribute in attributes:
+                            data.append({game_index: {
+                                "type_index": attribute_type,
+                                "bgg_index": attribute[0],
+                                "bgg_value": attribute[1],
+                                "bgg_json": None
+                            }})
+                elif attribute_type in [8]:
+                    if attributes:
+                        data.append({game_index: {
+                            "type_index": attribute_type,
+                            "bgg_index": None,
+                            "bgg_value": None,
+                            "bgg_json": attributes
+                        }})
+                elif attribute_type == 10:
+                    # TODO MARKET!!!!!
+                    if attributes:
+                        for offer in attributes:
+                            pass
+        return db.write_attributes_to_db(data)
 
     @staticmethod
     def __prepare_games_data(bgg_data: dict) -> dict:

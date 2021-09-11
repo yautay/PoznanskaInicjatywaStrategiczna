@@ -1,32 +1,28 @@
 from ..conftests import *
-from db.repository.games import BggGameAttributes, BggGameAttributesTypes
+from db.repository.games import BggGameAttributes, BggGameAttributesTypes, BggAttributesJson, BggAttributes
 from db.repository.games import ORMWrapperAttributes, ORMWrapperAttributeTypes
 
 
 def test_crud_attributes(db_session: Session):
     db = ORMWrapperAttributes(db_session)
     add_test_attributes_types(db_session)
-    test_attributes = {
-        12345: {
+    test_attributes = [
+        {12345: {
             "type_index": 1,
             "bgg_index": 2342,
             "bgg_value": "test value",
-            "bgg_json": None
-        },
-        1222345: {
+            "bgg_json": None}},
+        {1222345: {
             "type_index": 1,
             "bgg_index": 23432,
             "bgg_value": "test2 value",
             "bgg_json": {"test": 123,
-                         "test2": "dddddd"}
-        },
-        1235: {
+                         "test2": "dddddd"}}},
+        {1235: {
             "type_index": 2,
             "bgg_index": 23412,
             "bgg_value": "test3 value",
-            "bgg_json": None
-        }
-    }
+            "bgg_json": None}}]
     assert db.write_attributes_to_db(data=test_attributes)
     attributes = db.get_attributes_by_game_index(game_index=1222345)
     assert len(attributes) == 1
@@ -45,9 +41,9 @@ def test_add_attribute(db_session: Session):
                                                    attribute_type=2,
                                                    attribute_bgg_index=1,
                                                    attribute_bgg_value="Ed Haris")
-    retrieved_attributes = db_session.query(BggGameAttributes)
-    assert len(retrieved_attributes.all()) == 1
-    assert retrieved_attributes.first().attribute_bgg_value == "Ed Haris"
+    retrieved_game_attributes: BggGameAttributes = db_session.query(BggGameAttributes).first()
+    retrieved_attribute: BggAttributes = db_session.query(BggAttributes).filter(BggAttributes.id == retrieved_game_attributes.attribute).first()
+    assert retrieved_attribute.attribute_bgg_value == "Ed Haris"
 
 
 def test_update_attribute(db_session: Session):
@@ -60,7 +56,10 @@ def test_update_attribute(db_session: Session):
     db.update_attribute(attribute_id=1,
                         attribute_bgg_index=3,
                         attribute_bgg_value="changed")
-    assert db.get_attribute_by_id(1)["attribute_bgg_value"] == "changed"
+    retrieved_game_attributes: BggGameAttributes = db_session.query(BggGameAttributes).first()
+    retrieved_attribute: BggAttributes = db_session.query(BggAttributes).filter(
+        BggAttributes.id == retrieved_game_attributes.attribute).first()
+    assert retrieved_attribute.attribute_bgg_value == "changed"
 
 
 def test_delete_attribute(db_session: Session):

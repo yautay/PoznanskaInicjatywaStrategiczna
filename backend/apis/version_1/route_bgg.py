@@ -23,7 +23,7 @@ def retrieve_collection(data: CollectionCreate,
             current_user.superuser or current_user.administrator:
         interface = BggWrapper(db=db, bgg_user=data.bgg_user)
         if not interface.synchronize():
-            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return {"detail": f"Successfully synchronized '{data.bgg_user}' collection"}
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")

@@ -1,11 +1,13 @@
 import datetime
 from typing import List
 from schema import Schema, And, Use, Optional, SchemaError, Or
-from sqlalchemy import JSON
+from sqlalchemy import JSON, and_, not_
 
 from sqlalchemy.orm import Session
 
 from db.models.bgg_game import BggGame
+from db.models.bgg_attributes import BggAttributes
+from db.models.bgg_attributes_json import BggAttributesJson
 from db.models.bgg_game_attributes import BggGameAttributes
 from db.models.bgg_game_attributes_types import BggGameAttributesTypes
 
@@ -287,81 +289,109 @@ class ORMWrapperAttributesCRUD(object):
 
     def add_attribute(self,
                       game_index: int,
-                      attribute_type: int or str,
-                      attribute_bgg_index: int,
-                      attribute_bgg_value: str,
+                      attribute_type: int,
+                      attribute_bgg_index: int or None,
+                      attribute_bgg_value: str or None,
                       attribute_bgg_json: dict or None = None) -> bool:
+
+        attribute_bgg_json_id: int or None = None
+        attribute_bgg_id: int or None = None
         db = self.db
 
-        def get_type():
-            if isinstance(attribute_type, int):
-                attr = db.query(BggGameAttributesTypes)\
-                    .filter(BggGameAttributesTypes.attribute_type_index == attribute_type).first()
-            else:
-                attr = db.query(BggGameAttributesTypes)\
-                    .filter(BggGameAttributesTypes.attribute_type_name == attribute_type).first()
-            if attr:
-                return attr
-            else:
-                return "undefined"
-
-        def create_attribute_row():
-            row = BggGameAttributes()
-            row.game_index = game_index
-            row.attribute_type_index = get_type().attribute_type_index
-            row.attribute_bgg_index = attribute_bgg_index
-            row.attribute_bgg_value = attribute_bgg_value
+        def create_bgg_attribute_json() -> BggAttributesJson:
+            row = BggAttributesJson()
             row.attribute_bgg_json = attribute_bgg_json
             return row
 
-        row = create_attribute_row()
+        def create_bgg_attribute() -> BggAttributes:
+            row = BggAttributes()
+            row.attribute_bgg_index = attribute_bgg_index
+            row.attribute_bgg_value = attribute_bgg_value
+            row.attribute_bgg_json = attribute_bgg_json_id
+            return row
+
+        def create_game_attribute_row(attribute_id: int) -> BggGameAttributes:
+            row = BggGameAttributes()
+            row.game_index = game_index
+            row.attribute_type_index = attribute_type
+            row.attribute = attribute_id
+            return row
+
+        if attribute_bgg_json:
+            bgg_attribute_json = create_bgg_attribute_json()
+            try:
+                db.add(bgg_attribute_json)
+                db.commit()
+                attribute_bgg_json_id = db.query(BggAttributesJson)\
+                    .filter(BggAttributesJson.attribute_bgg_json == bgg_attribute_json.attribute_bgg_json).first().id
+            except:
+                return False
+
+        bgg_attribute = create_bgg_attribute()
         try:
-            db.add(row)
+            existing_attribute_bgg_id: BggAttributes = db.query(BggAttributes) \
+                .filter(and_(BggAttributes.attribute_bgg_json == bgg_attribute.attribute_bgg_json,
+                             BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value,
+                             BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first()
+            updatable_attribute_bgg_id: BggAttributes = db.query(BggAttributes)\
+                .filter(and_(not_(BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value),
+                             BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first()
+            if existing_attribute_bgg_id:
+                attribute_bgg_id = existing_attribute_bgg_id.id
+            elif updatable_attribute_bgg_id:
+                self.update_attribute(updatable_attribute_bgg_id.id,
+                                      attribute_bgg_index=attribute_bgg_index,
+                                      attribute_bgg_value=attribute_bgg_value,
+                                      attribute_bgg_json=attribute_bgg_json)
+            else:
+                db.add(bgg_attribute)
+                db.commit()
+                attribute_bgg_id = db.query(BggAttributes) \
+                    .filter(and_(BggAttributes.attribute_bgg_json == bgg_attribute.attribute_bgg_json,
+                                 BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value,
+                                 BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first().id
+        except:
+            return False
+
+        game_attribute = create_game_attribute_row(attribute_bgg_id)
+        try:
+            db.add(game_attribute)
             db.commit()
             return True
         except:
             return False
-
-    def get_attribute_by_id(self, attribute_id: int) -> dict or None:
-        db = self.db
-        try:
-            instance = db.query(BggGameAttributes).filter(BggGameAttributes.id == attribute_id).first()
-            return self.__instance_to_json(instance)
-        except:
-            return None
-
-    def get_attributes_by_game_index(self, game_index: int) -> List[dict] or None:
-        db = self.db
-        try:
-            data = []
-            instances = db.query(BggGameAttributes).filter(BggGameAttributes.game_index == game_index).all()
-            for instance in instances:
-                data.append(self.__instance_to_json(instance))
-            return data
-        except:
-            return None
 
     def update_attribute(self,
                          attribute_id: int,
                          attribute_bgg_index: int,
                          attribute_bgg_value: str,
                          attribute_bgg_json: dict or None = None) -> bool:
+        changed = False
         db = self.db
-        existing_data = db.query(BggGameAttributes).filter(
-            BggGameAttributes.id == attribute_id).first()
-        if existing_data:
-            if existing_data.attribute_bgg_index != attribute_bgg_index:
-                existing_data.attribute_bgg_index = attribute_bgg_index
-            if existing_data.attribute_bgg_value != attribute_bgg_value:
-                existing_data.attribute_bgg_value = attribute_bgg_value
-            if existing_data.attribute_bgg_json != attribute_bgg_json:
-                existing_data.attribute_bgg_json = attribute_bgg_json
-            try:
+        try:
+            existing_game_attribute: BggGameAttributes = db.query(BggGameAttributes).filter(
+                BggGameAttributes.id == attribute_id).first()
+            existing_bgg_attribute: BggAttributes = db.query(BggAttributes) \
+                .filter(BggAttributes.id == existing_game_attribute.id).first()
+            existing_bgg_attribute_json: BggAttributesJson = db.query(BggAttributesJson) \
+                .filter(BggAttributesJson.id == existing_bgg_attribute.attribute_bgg_json).first()
+
+            if existing_bgg_attribute.attribute_bgg_index != attribute_bgg_index:
+                existing_bgg_attribute.attribute_bgg_index = attribute_bgg_index
+                changed = True
+            if existing_bgg_attribute.attribute_bgg_value != attribute_bgg_value:
+                existing_bgg_attribute.attribute_bgg_value = attribute_bgg_value
+                changed = True
+            if attribute_bgg_json:
+                if existing_bgg_attribute_json.attribute_bgg_json != attribute_bgg_json:
+                    existing_bgg_attribute_json.attribute_bgg_json = attribute_bgg_json
+                    changed = True
+            if changed:
                 db.commit()
                 return True
-            except:
+            else:
                 return False
-        else:
+        except:
             return False
 
     def delete_attribute(self, attribute_id: int) -> bool:
@@ -374,15 +404,39 @@ class ORMWrapperAttributesCRUD(object):
         except:
             return False
 
+    def get_attribute_by_id(self, attribute_id: int) -> dict or None:
+        db = self.db
+        try:
+            instance = db.query(BggGameAttributes).filter(BggGameAttributes.id == attribute_id).first()
+            return self.__instance_to_json(instance, db)
+        except:
+            return None
+
+    def get_attributes_by_game_index(self, game_index: int) -> List[dict] or None:
+        db = self.db
+        data = []
+        try:
+            instances = db.query(BggGameAttributes).filter(BggGameAttributes.game_index == game_index).all()
+            for instance in instances:
+                data.append(self.__instance_to_json(instance, db))
+            return data
+        except:
+            return None
+
     @staticmethod
-    def __instance_to_json(instance: BggGameAttributes) -> dict:
+    def __instance_to_json(instance: BggGameAttributes, db: Session) -> dict:
+        bgg_attribute: BggAttributes = db.query(BggAttributes).filter(BggAttributes.id == instance.attribute).first()
+        bgg_attribute_json: str or None = None
+        if bgg_attribute.attribute_bgg_json:
+            bgg_attribute_json = db.query(BggAttributesJson)\
+                .filter(BggAttributesJson.id == bgg_attribute.attribute_bgg_json).first().attribute_bgg_json
         return {
             "id": instance.id,
             "game_index": instance.game_index,
             "attribute_type_index": instance.attribute_type_index,
-            "attribute_bgg_index": instance.attribute_bgg_index,
-            "attribute_bgg_value": instance.attribute_bgg_value,
-            "attribute_bgg_json": instance.attribute_bgg_json
+            "attribute_bgg_index": bgg_attribute.attribute_bgg_index,
+            "attribute_bgg_value": bgg_attribute.attribute_bgg_value,
+            "attribute_bgg_json": bgg_attribute_json
         }
 
 
@@ -391,8 +445,8 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
         super().__init__(db)
         self.db = db
 
-    def write_attributes_to_db(self, data: dict) -> bool:
-        def check_schema():
+    def write_attributes_to_db(self, data: list) -> bool:
+        def check_schema(dict_data):
             data_schema = Schema({
                 Use(int): {
                     "type_index": And(Use(str)),
@@ -400,28 +454,20 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                     "bgg_value": And(Use(str)),
                     "bgg_json": Or({object: object}, None)
                 }})
-            # TODO debug
-            data_schema.validate(data)
             try:
-                data_schema.validate(data)
+                data_schema.validate(dict_data)
                 return True
             except SchemaError:
                 return False
-        if not check_schema():
-            return False
-        for k, v in data.items():
-            existing_attribute = self.db.query(BggGameAttributes).filter(
-                BggGameAttributes.id == k)
-            if not existing_attribute.first():
-                status = self.add_attribute(game_index=k,
-                                            attribute_type=v["type_index"],
-                                            attribute_bgg_index=v["bgg_index"],
-                                            attribute_bgg_value=v["bgg_value"],
-                                            attribute_bgg_json=v["bgg_json"])
-            else:
-                #TODO dodać validację czy nie nadpisujemy różnych atrybutów
-                status = self.update_attribute(attribute_id=k,
-                                               attribute_bgg_index=v["bgg_index"],
-                                               attribute_bgg_value=v["bgg_value"],
-                                               attribute_bgg_json=v["bgg_json"])
-        return status
+        for index in data:
+            if not check_schema(index):
+                return False
+            for game_index, v in index.items():
+                instance = self.add_attribute(game_index=game_index,
+                                              attribute_type=v["type_index"],
+                                              attribute_bgg_index=v["bgg_index"],
+                                              attribute_bgg_value=v["bgg_value"],
+                                              attribute_bgg_json=v["bgg_json"])
+                if not instance:
+                    return False
+        return True
