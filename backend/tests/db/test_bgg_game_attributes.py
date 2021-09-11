@@ -10,17 +10,21 @@ def test_crud_attributes(db_session: Session):
         12345: {
             "type_index": 1,
             "bgg_index": 2342,
-            "bgg_value": "test value"
+            "bgg_value": "test value",
+            "bgg_json": None
         },
         1222345: {
             "type_index": 1,
             "bgg_index": 23432,
-            "bgg_value": "test2 value"
+            "bgg_value": "test2 value",
+            "bgg_json": {"test": 123,
+                         "test2": "dddddd"}
         },
         1235: {
             "type_index": 2,
             "bgg_index": 23412,
-            "bgg_value": "test3 value"
+            "bgg_value": "test3 value",
+            "bgg_json": None
         }
     }
     assert db.write_attributes_to_db(data=test_attributes)
@@ -65,7 +69,8 @@ def test_delete_attribute(db_session: Session):
     db.add_attribute(game_index=22222,
                      attribute_type=2,
                      attribute_bgg_index=1,
-                     attribute_bgg_value="Ed Haris")
+                     attribute_bgg_value="Ed Haris",
+                     attribute_bgg_json=None)
     db.delete_attribute(1)
     assert not db_session.query(BggGameAttributes).all()
 

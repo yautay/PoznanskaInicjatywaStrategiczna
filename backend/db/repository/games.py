@@ -1,6 +1,6 @@
 import datetime
 from typing import List
-from schema import Schema, And, Use, Optional, SchemaError
+from schema import Schema, And, Use, Optional, SchemaError, Or
 from sqlalchemy import JSON
 
 from sqlalchemy.orm import Session
@@ -290,7 +290,7 @@ class ORMWrapperAttributesCRUD(object):
                       attribute_type: int or str,
                       attribute_bgg_index: int,
                       attribute_bgg_value: str,
-                      attribute_bgg_json: JSON) -> bool:
+                      attribute_bgg_json: dict or None = None) -> bool:
         db = self.db
 
         def get_type():
@@ -345,7 +345,7 @@ class ORMWrapperAttributesCRUD(object):
                          attribute_id: int,
                          attribute_bgg_index: int,
                          attribute_bgg_value: str,
-                         attribute_bgg_json: JSON) -> bool:
+                         attribute_bgg_json: dict or None = None) -> bool:
         db = self.db
         existing_data = db.query(BggGameAttributes).filter(
             BggGameAttributes.id == attribute_id).first()
@@ -354,6 +354,8 @@ class ORMWrapperAttributesCRUD(object):
                 existing_data.attribute_bgg_index = attribute_bgg_index
             if existing_data.attribute_bgg_value != attribute_bgg_value:
                 existing_data.attribute_bgg_value = attribute_bgg_value
+            if existing_data.attribute_bgg_json != attribute_bgg_json:
+                existing_data.attribute_bgg_json = attribute_bgg_json
             try:
                 db.commit()
                 return True
@@ -396,8 +398,9 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                     "type_index": And(Use(str)),
                     "bgg_index": And(Use(str)),
                     "bgg_value": And(Use(str)),
-                    "attribute_bgg_json": And(Use(str))
+                    "bgg_json": Or({object: object}, None)
                 }})
+            data_schema.validate(data)
             try:
                 data_schema.validate(data)
                 return True
