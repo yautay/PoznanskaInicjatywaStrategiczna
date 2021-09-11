@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from db.repository.users import retrieve_users_by_email, set_superuser
+from db.repository.pis_users import retrieve_users_by_email, set_superuser
 from tests.utils.randoms import random_lower_string
 from tests.utils.user import create_random_user_data, create_random_user
 from fastapi.testclient import TestClient

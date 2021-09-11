@@ -17,5 +17,13 @@ def random_date():
     return (d1 + timedelta(seconds=random_second)).strftime('%Y-%m-%d')
 
 
-def random_index(k: int) -> int:
+def random_index() -> int:
     return random.randint(10000, 99999)
+
+
+def random_json() -> dict:
+    return {
+        random_lower_string(5): random_lower_string(12),
+        random_lower_string(2): random_lower_string(10),
+        random_index(): random_lower_string(21)
+    }

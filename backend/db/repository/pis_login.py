@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from db.repository.users import \
+from db.repository.pis_users import \
     retrieve_users_by_email, \
     retrieve_users_by_login
-from db.models.user import User
+from db.models.pis_user import User
 
 
 def get_user_by_login_or_email(user_login_or_email: str, db: Session) -> User or None:

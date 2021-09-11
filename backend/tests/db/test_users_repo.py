@@ -1,6 +1,6 @@
 from ..conftests import *
 from sqlalchemy.orm import Session
-from db.repository.users import \
+from db.repository.pis_users import \
     retrieve_users, \
     retrieve_users_by_email, \
     retrieve_users_by_login, \

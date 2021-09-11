@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from schemas.users import UserCreate
-from db.models.user import User
+from db.models.pis_user import User
 from core.hashing import Hasher
 
 

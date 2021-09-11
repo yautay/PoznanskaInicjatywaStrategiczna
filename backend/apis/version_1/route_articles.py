@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from db.models.user import User
+from db.models.pis_user import User
 from db.session import get_db
 from schemas.articles import \
     ArticleCreate, \
     ArticleShow
-from db.repository.articles import \
+from db.repository.pis_articles import \
     create_new_article, \
     retrieve_article_by_id, \
     retrieve_articles_by_user, \

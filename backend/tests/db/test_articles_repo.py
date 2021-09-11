@@ -1,6 +1,6 @@
 from ..conftests import *
 from sqlalchemy.orm import Session
-from db.repository.articles import\
+from db.repository.pis_articles import\
     create_new_article,\
     retrieve_article_by_id,\
     retrieve_articles,\

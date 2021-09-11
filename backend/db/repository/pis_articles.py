@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from schemas.articles import ArticleCreate
-from db.models.article import Article
+from db.models.pis_article import Article
 
 
 def create_new_article(article: ArticleCreate, db: Session, user_id: int):

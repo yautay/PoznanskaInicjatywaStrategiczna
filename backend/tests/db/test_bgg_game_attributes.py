@@ -1,70 +1,20 @@
 from ..conftests import *
-from db.repository.games import BggGameAttributes, BggAttributes
-from db.repository.games import ORMWrapperAttributes
+from tests.utils.bgg_game_attribute import create_random_bgg_game_attribute
+from db.repository.bgg_game_attributes import ORMWrapperBggGameAttributes
 
 
-def test_crud_attributes(db_session: Session):
-    db = ORMWrapperAttributes(db_session)
-    test_attributes = [
-        {12345: {
-            "type_index": 1,
-            "bgg_index": 2342,
-            "bgg_value": "test value",
-            "bgg_json": None}},
-        {1222345: {
-            "type_index": 1,
-            "bgg_index": 23432,
-            "bgg_value": "test2 value",
-            "bgg_json": {"test": 123,
-                         "test2": "dddddd"}}},
-        {1235: {
-            "type_index": 2,
-            "bgg_index": 23412,
-            "bgg_value": "test3 value",
-            "bgg_json": None}}]
-    assert db.write_attributes_to_db(data=test_attributes)
-    attributes = db.get_attributes_by_game_index(game_index=1222345)
-    assert len(attributes) == 1
-    assert db.delete_attribute(attribute_id=attributes[0]["id"])
-    attributes = db.get_attributes_by_game_index(game_index=1235)
-    assert db.update_attribute(attribute_id=attributes[0]["id"],
-                               attribute_bgg_index=111,
-                               attribute_bgg_value="changed")
-    assert len(db_session.query(BggGameAttributes).all()) == 2
-    assert db.get_attribute_by_id(attribute_id=attributes[0]["id"])["attribute_bgg_value"] == "changed"
+def test_add_bgg_game_attribute(db_session: Session):
+    data = create_random_bgg_game_attribute()
+    assert ORMWrapperBggGameAttributes(db_session).create(data)
 
 
-def test_add_attribute(db_session: Session):
-    ORMWrapperAttributes(db_session).add_attribute(game_index=22222,
-                                                   attribute_type=2,
-                                                   attribute_bgg_index=1,
-                                                   attribute_bgg_value="Ed Haris")
-    retrieved_game_attributes: BggGameAttributes = db_session.query(BggGameAttributes).first()
-    retrieved_attribute: BggAttributes = db_session.query(BggAttributes).filter(BggAttributes.id == retrieved_game_attributes.attribute).first()
-    assert retrieved_attribute.attribute_bgg_value == "Ed Haris"
+def test_retrieve_bgg_game_attribute(db_session: Session):
+    data = create_random_bgg_game_attribute()
+    ORMWrapperBggGameAttributes(db_session).create(data)
+    assert ORMWrapperBggGameAttributes(db_session).read(1)
 
 
-def test_update_attribute(db_session: Session):
-    db = ORMWrapperAttributes(db_session)
-    db.add_attribute(game_index=22222,
-                     attribute_type=2,
-                     attribute_bgg_index=1,
-                     attribute_bgg_value="Ed Haris")
-    db.update_attribute(attribute_id=1,
-                        attribute_bgg_index=3,
-                        attribute_bgg_value="changed")
-    retrieved_game_attributes: BggGameAttributes = db_session.query(BggGameAttributes).first()
-    retrieved_attribute: BggAttributes = db_session.query(BggAttributes).filter(
-        BggAttributes.id == retrieved_game_attributes.attribute).first()
-    assert retrieved_attribute.attribute_bgg_value == "changed"
-
-
-def test_delete_attribute(db_session: Session):
-    db = ORMWrapperAttributes(db_session)
-    db.add_attribute(game_index=22222,
-                     attribute_type=2,
-                     attribute_bgg_index=1,
-                     attribute_bgg_value="Ed Haris",
-                     attribute_bgg_json=None)
-    db.delete_attribute(1)
-    assert not db_session.query(BggGameAttributes).all()
+def test_delete_bgg_game_attribute(db_session: Session):
+    data = create_random_bgg_game_attribute()
+    ORMWrapperBggGameAttributes(db_session).create(data)
+    assert ORMWrapperBggGameAttributes(db_session).delete(1)

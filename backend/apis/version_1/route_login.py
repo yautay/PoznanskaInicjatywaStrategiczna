@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 from core.config import settings
 from core.hashing import Hasher
 from core.security import create_access_token
-from db.models.user import User
+from db.models.pis_user import User
 from db.session import get_db
-from db.repository.login import get_user_by_login_or_email
+from db.repository.pis_login import get_user_by_login_or_email
 
 
 router = APIRouter()

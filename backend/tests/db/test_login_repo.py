@@ -1,6 +1,6 @@
 from ..conftests import *
 from sqlalchemy.orm import Session
-from db.repository.login import get_user_by_login_or_email
+from db.repository.pis_login import get_user_by_login_or_email
 from tests.utils.user import \
     create_random_user, \
     create_test_users, \

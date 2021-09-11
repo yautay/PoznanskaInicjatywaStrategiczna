@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from typing import List
 
-from db.models.article import Article
+from db.models.pis_article import Article
 from schemas.articles import ArticleCreate
-from db.repository.articles import create_new_article
+from db.repository.pis_articles import create_new_article
 from tests.utils.randoms import random_lower_string
 
 

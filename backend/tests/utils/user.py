@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from typing import List
 
-from db.models.user import User
+from db.models.pis_user import User
 from schemas.users import UserCreate
-from db.repository.users import create_new_user
+from db.repository.pis_users import create_new_user
 from tests.utils.randoms import random_lower_string, random_date
 
 

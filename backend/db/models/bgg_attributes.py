@@ -11,3 +11,10 @@ class BggAttributes(Base):
     attribute_bgg_json = Column(JSON, nullable=True)
     bgg_game_attributes = relationship("BggGameAttributes")
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "attribute_bgg_index": self.attribute_bgg_index,
+            "attribute_bgg_value": self.attribute_bgg_value,
+            "attribute_bgg_json": self.attribute_bgg_json
+        }
