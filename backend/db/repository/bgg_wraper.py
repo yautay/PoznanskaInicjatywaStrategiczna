@@ -29,14 +29,20 @@ class BggWrapper(ORMWrapperCollection, ORMWrapperGame, ORMWrapperAttributes):
 
     def __add_attributes_to_db(self, games_attributes_db_dict: dict) -> bool:
         db = ORMWrapperAttributes(self.db)
-        for k, v in games_attributes_db_dict.items():
-            for k2, v2 in v.items():
-                db.write_attributes_to_db()
+        for game_index, v in games_attributes_db_dict.items():
+
+            for attr_type, v2 in v.items():
+                if attr_type in [1, 2, 3, 5, 6, 7]:
+                    #TODO TERA
+                print("K", game_index, "K2", k2,"V2", v2)
+                db.write_attributes_to_db(games_attributes_db_dict)
                 print(v2)
 
     # "type_index": And(Use(str)),
     # "bgg_index": And(Use(str)),
     # "bgg_value": And(Use(str))
+    # "bgg_json": Or({object: object}, None)
+    # 1[['71', 'Rodger B. MacGowan'], ['11856', 'Mark Mahaffey']]
 
 
     @staticmethod
@@ -57,13 +63,6 @@ class BggWrapper(ORMWrapperCollection, ORMWrapperGame, ORMWrapperAttributes):
     @staticmethod
     def __prepare_games_attributes_data(bgg_data: dict) -> dict:
         model = {}
-
-        # id = Column(Integer, primary_key=True)
-        # game_index = Column(Integer, ForeignKey("bgggame.game_index"), index=True)
-        # attribute_type_index = Column(Integer)
-        # attribute_bgg_index = Column(Integer, index=True)
-        # attribute_bgg_value = Column(String(250))
-
         for k, v in bgg_data.items():
             model[k] = {}
             for kv, vv in v.items():

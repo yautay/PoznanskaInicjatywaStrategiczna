@@ -400,6 +400,7 @@ class ORMWrapperAttributes(ORMWrapperAttributesCRUD):
                     "bgg_value": And(Use(str)),
                     "bgg_json": Or({object: object}, None)
                 }})
+            # TODO debug
             data_schema.validate(data)
             try:
                 data_schema.validate(data)
