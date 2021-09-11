@@ -1,11 +1,10 @@
 from ..conftests import *
 from db.repository.games import BggGameAttributes, BggAttributes
-from db.repository.games import ORMWrapperAttributes, ORMWrapperAttributeTypes
+from db.repository.games import ORMWrapperAttributes
 
 
 def test_crud_attributes(db_session: Session):
     db = ORMWrapperAttributes(db_session)
-    add_test_attributes_types(db_session)
     test_attributes = [
         {12345: {
             "type_index": 1,
@@ -36,7 +35,6 @@ def test_crud_attributes(db_session: Session):
 
 
 def test_add_attribute(db_session: Session):
-    add_test_attributes_types(db_session)
     ORMWrapperAttributes(db_session).add_attribute(game_index=22222,
                                                    attribute_type=2,
                                                    attribute_bgg_index=1,
@@ -47,7 +45,6 @@ def test_add_attribute(db_session: Session):
 
 
 def test_update_attribute(db_session: Session):
-    add_test_attributes_types(db_session)
     db = ORMWrapperAttributes(db_session)
     db.add_attribute(game_index=22222,
                      attribute_type=2,
@@ -63,7 +60,6 @@ def test_update_attribute(db_session: Session):
 
 
 def test_delete_attribute(db_session: Session):
-    add_test_attributes_types(db_session)
     db = ORMWrapperAttributes(db_session)
     db.add_attribute(game_index=22222,
                      attribute_type=2,
@@ -72,12 +68,3 @@ def test_delete_attribute(db_session: Session):
                      attribute_bgg_json=None)
     db.delete_attribute(1)
     assert not db_session.query(BggGameAttributes).all()
-
-
-def add_test_attributes_types(db):
-    attribute_types = {
-        1: "alfa",
-        2: "beta",
-        3: "gama"
-    }
-    ORMWrapperAttributeTypes(db).write_game_attributes_types_to_db(attribute_types)
