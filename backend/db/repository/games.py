@@ -1,13 +1,12 @@
 import datetime
 from typing import List
 from schema import Schema, And, Use, Optional, SchemaError, Or
-from sqlalchemy import JSON, and_, not_
+from sqlalchemy import JSON, and_, not_, or_
 
 from sqlalchemy.orm import Session
 
 from db.models.bgg_game import BggGame
 from db.models.bgg_attributes import BggAttributes
-from db.models.bgg_attributes_json import BggAttributesJson
 from db.models.bgg_game_attributes import BggGameAttributes
 from db.models.bgg_game_attributes_types import BggGameAttributesTypes
 
@@ -298,11 +297,6 @@ class ORMWrapperAttributesCRUD(object):
         attribute_bgg_id: int or None = None
         db = self.db
 
-        def create_bgg_attribute_json() -> BggAttributesJson:
-            row = BggAttributesJson()
-            row.attribute_bgg_json = attribute_bgg_json
-            return row
-
         def create_bgg_attribute() -> BggAttributes:
             row = BggAttributes()
             row.attribute_bgg_index = attribute_bgg_index
@@ -317,16 +311,6 @@ class ORMWrapperAttributesCRUD(object):
             row.attribute = attribute_id
             return row
 
-        if attribute_bgg_json:
-            bgg_attribute_json = create_bgg_attribute_json()
-            try:
-                db.add(bgg_attribute_json)
-                db.commit()
-                attribute_bgg_json_id = db.query(BggAttributesJson)\
-                    .filter(BggAttributesJson.attribute_bgg_json == bgg_attribute_json.attribute_bgg_json).first().id
-            except:
-                return False
-
         bgg_attribute = create_bgg_attribute()
         try:
             existing_attribute_bgg_id: BggAttributes = db.query(BggAttributes) \
@@ -334,7 +318,8 @@ class ORMWrapperAttributesCRUD(object):
                              BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value,
                              BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first()
             updatable_attribute_bgg_id: BggAttributes = db.query(BggAttributes)\
-                .filter(and_(not_(BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value),
+                .filter(and_(or_(not_(BggAttributes.attribute_bgg_value == bgg_attribute.attribute_bgg_value),
+                                 not_(BggAttributes.attribute_bgg_json == bgg_attribute.attribute_bgg_json)),
                              BggAttributes.attribute_bgg_index == bgg_attribute.attribute_bgg_index)).first()
             if existing_attribute_bgg_id:
                 attribute_bgg_id = existing_attribute_bgg_id.id

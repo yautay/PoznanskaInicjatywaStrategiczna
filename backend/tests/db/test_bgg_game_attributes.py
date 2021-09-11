@@ -1,5 +1,5 @@
 from ..conftests import *
-from db.repository.games import BggGameAttributes, BggGameAttributesTypes, BggAttributesJson, BggAttributes
+from db.repository.games import BggGameAttributes, BggAttributes
 from db.repository.games import ORMWrapperAttributes, ORMWrapperAttributeTypes
 
 

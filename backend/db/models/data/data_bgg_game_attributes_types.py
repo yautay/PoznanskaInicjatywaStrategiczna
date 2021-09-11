@@ -28,5 +28,4 @@ class DataBggGameAttributesTypes(KeysBggGameAttributesTypes):
             {"attribute_type_index": 7, "attribute_type_name": k.BOARDGAME_FAMILY},
             {"attribute_type_index": 8, "attribute_type_name": k.BOARDGAME_VERSIONS},
             {"attribute_type_index": 9, "attribute_type_name": k.BOARDGAME_EXPANSIONS},
-            {"attribute_type_index": 10, "attribute_type_name": k.MARKETPLACE}
-        ]
+            {"attribute_type_index": 10, "attribute_type_name": k.MARKETPLACE}]
