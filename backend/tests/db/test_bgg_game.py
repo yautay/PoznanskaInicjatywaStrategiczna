@@ -13,7 +13,7 @@ def test_add_bgg_game(db_session: Session):
 def test_update_bgg_game(db_session: Session):
     data = create_random_bgg_game()
     assert ORMWrapperBggGame(db_session).create(data)
-    data["attribute_bgg_value"] = "changed"
+    data["game_name"] = "changed"
     assert ORMWrapperBggGame(db_session).create(data)
 
 

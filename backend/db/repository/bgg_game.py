@@ -1,5 +1,7 @@
+import datetime
 import logging
 from schema import Schema, Use, SchemaError
+from sqlalchemy import Date
 from sqlalchemy.orm import Session
 from db.models.bgg_game import BggGame
 
@@ -22,7 +24,7 @@ class ORMWrapperBggGame(object):
                 "game_index": Use(int),
                 "game_name": Use(str),
                 "game_description": Use(str),
-                "game_published": Use(int),
+                "game_published": Use(str),
                 "game_thumbnails": Use(str),
                 "game_images": Use(str),
                 "game_min_players": Use(int),
@@ -32,6 +34,7 @@ class ORMWrapperBggGame(object):
                 return True
             except SchemaError:
                 logger.error(f'Schema validation error for {data}')
+                logger.exception("msg")
                 return False
 
         if not check_schema():
