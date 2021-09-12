@@ -26,6 +26,7 @@ class ORMWrapperBggAttribute(object):
                 return True
             except SchemaError:
                 logger.error(f'Schema validation error for {data}')
+                logger.exception("msg")
                 return False
 
         if not check_schema():
@@ -38,6 +39,7 @@ class ORMWrapperBggAttribute(object):
                 return True
             except:
                 logger.critical(f"BggAttributes not UPDATED to db. \n instance: {existing.to_json()} \n data: {data}")
+                logger.exception("msg")
                 return False
         else:
             attribute = BggAttribute(**data)
@@ -47,13 +49,14 @@ class ORMWrapperBggAttribute(object):
                 return True
             except:
                 logger.critical(f"BggAttributes not ADDED to db. \n instance: {attribute.to_json()} \n data: {data}")
+                logger.exception("msg")
                 return False
 
     def read(self, data: int) -> BggAttribute or None:
         db = self.db
         return db.query(BggAttribute).filter(BggAttribute.id == data).first()
 
-    def delete(self, data: int or str) -> bool:
+    def delete(self, data: int) -> bool:
         db = self.db
         try:
             instance = self.read(data)

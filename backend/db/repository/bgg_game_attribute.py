@@ -1,4 +1,3 @@
-from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from schema import Schema, Use, SchemaError
 from db.models.bgg_game_attribute import BggGameAttribute
@@ -41,7 +40,7 @@ class ORMWrapperBggGameAttribute(object):
         db = self.db
         return db.query(BggGameAttribute).filter(BggGameAttribute.id == data).first()
 
-    def delete(self, data: int or str) -> bool:
+    def delete(self, data: int) -> bool:
         db = self.db
         try:
             instance = self.read(data)

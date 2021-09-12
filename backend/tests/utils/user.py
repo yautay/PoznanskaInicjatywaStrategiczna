@@ -55,7 +55,7 @@ def create_random_user(db: Session, data: dict = None) -> PisUser:
     return user
 
 
-def create_random_user_data() -> dict:
+def create_random_user_data(to_string=False) -> dict:
     return {
         "login": random_lower_string(7),
         "email": f"{random_lower_string(6)}@{random_lower_string(6)}.com",
@@ -63,4 +63,4 @@ def create_random_user_data() -> dict:
         "bgg_user": random_lower_string(6),
         "name": random_lower_string(10),
         "surname": random_lower_string(15),
-        "birthdate": random_date()}
+        "birthdate": random_date(to_string)}

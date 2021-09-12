@@ -20,3 +20,21 @@ class BggUserCollection(Base):
     collection_wishlist = Column(Integer)
     collection_lastmodified = Column(DateTime)
     user = relationship("PisUser", back_populates="collections")
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "game_index": self.game_index,
+            "collection_updated": self.collection_updated.isoformat(),
+            "collection_numplays": self.collection_numplays,
+            "collection_fortrade": self.collection_fortrade,
+            "collection_preordered": self.collection_preordered,
+            "collection_prevowned": self.collection_prevowned,
+            "collection_want": self.collection_want,
+            "collection_wanttobuy": self.collection_wanttobuy,
+            "collection_wanttoplay": self.collection_wanttoplay,
+            "collection_wishlist": self.collection_wishlist,
+            "collection_lastmodified": self.collection_lastmodified.isoformat(),
+            "collection_comment": self.collection_comment
+        }

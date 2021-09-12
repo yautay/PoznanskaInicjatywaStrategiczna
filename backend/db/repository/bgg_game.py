@@ -1,7 +1,5 @@
-import datetime
 import logging
 from schema import Schema, Use, SchemaError
-from sqlalchemy import Date
 from sqlalchemy.orm import Session
 from db.models.bgg_game import BggGame
 
@@ -64,7 +62,7 @@ class ORMWrapperBggGame(object):
         db = self.db
         return db.query(BggGame).filter(BggGame.id == data).first()
 
-    def delete(self, data: int or str) -> bool:
+    def delete(self, data: int) -> bool:
         db = self.db
         try:
             instance = self.read(data)
