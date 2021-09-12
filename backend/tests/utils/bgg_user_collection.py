@@ -6,6 +6,7 @@ def create_random_bgg_user_collection() -> dict:
     return {
         "user_id": random_index(),
         "game_index": random_index(),
+        "collection_own": random.randint(0, 1),
         "collection_comment": random_lower_string(12),
         "collection_numplays": random.randint(4, 12),
         "collection_fortrade": random.randint(0, 1),

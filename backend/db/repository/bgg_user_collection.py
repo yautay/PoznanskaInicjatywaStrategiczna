@@ -5,7 +5,7 @@ from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from db.models.bgg_user_collection import BggUserCollection
 
-logger = logging.getLogger('ORMWrapperBggGame')
+logger = logging.getLogger('ORMWrapperBggUserCollection')
 
 
 class ORMWrapperBggUserCollection(object):
@@ -24,6 +24,7 @@ class ORMWrapperBggUserCollection(object):
             data_schema = Schema({
                 "user_id": (Use(int)),
                 "game_index": (Use(int)),
+                "collection_own": Or(Use(int), None),
                 "collection_comment": Or(Use(str), None),
                 "collection_numplays": Or(Use(int), None),
                 "collection_fortrade": Or(Use(int), None),

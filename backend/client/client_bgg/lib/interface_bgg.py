@@ -1,7 +1,10 @@
 import time
 import requests
+import logging
 from client.client_bgg.model import *
 from client.client_bgg.parser import *
+
+logger = logging.getLogger("InterfaceBgg")
 
 
 class InterfaceBgg:
@@ -48,6 +51,7 @@ class InterfaceBgg:
             self.__bgg = bgg_object
 
         def send_request(self):
+            logger.debug(f"url: {self.__bgg.url}, params: {self.__bgg.parameters()}")
             self.__response = requests.get(self.__bgg.url, self.__bgg.parameters())
 
         @property

@@ -1,11 +1,13 @@
 import json
-
+import logging
 from ..conftests import *
 
+logger = logging.getLogger("TestsBgg")
 
 def test_synchro_collection_by_user_normal(client, normal_user_token_headers):
     data = {"bgg_user": "test"}
     response = client.post("/bgg/collection", json.dumps(data), headers=normal_user_token_headers)
+    logger.info(f"url: {response.url}, params: {response.json()}")
     assert response.status_code == 401
 
 

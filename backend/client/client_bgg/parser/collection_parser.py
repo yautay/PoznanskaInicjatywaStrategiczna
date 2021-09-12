@@ -3,7 +3,7 @@ from client.client_bgg.parser.item_keys import CollectionItemKeys as key
 
 
 class CollectionParser(Parser, ParserWrapper):
-    def parse_data(self, xml_data: str):
+    def parse_data(self, xml_data: str) -> dict:
         items = {}
         root = self.get_root(xml_data)
         for item in root:
@@ -25,6 +25,8 @@ class CollectionParser(Parser, ParserWrapper):
     def parse_status(element):
         status = {}
         for i in element:
+            if i[0] == key.OWN:
+                status[key.OWN] = i[1]
             if i[0] == key.PREVOWNED:
                 status[key.PREVOWNED] = i[1]
             elif i[0] == key.FORTRADE:

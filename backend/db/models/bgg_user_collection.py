@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, Date, ForeignKey, Boolean, JSON, String, DateTime
 from sqlalchemy.orm import relationship
-
 from db.base_class import Base
 
 
@@ -9,6 +8,7 @@ class BggUserCollection(Base):
     collection_updated = Column(DateTime)
     user_id = Column(Integer, ForeignKey("pisuser.id"))
     game_index = Column(Integer)
+    collection_own = Column(Integer)
     collection_comment = Column(String)
     collection_numplays = Column(Integer)
     collection_fortrade = Column(Integer)
@@ -26,6 +26,7 @@ class BggUserCollection(Base):
             "id": self.id,
             "user_id": self.user_id,
             "game_index": self.game_index,
+            "collection_own": self.collection_own,
             "collection_updated": self.collection_updated.isoformat(),
             "collection_numplays": self.collection_numplays,
             "collection_fortrade": self.collection_fortrade,
