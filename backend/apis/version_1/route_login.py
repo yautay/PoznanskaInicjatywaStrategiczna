@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from core.config import settings
 from core.hashing import Hasher
 from core.security import create_access_token
-from db.models.pis_user import User
+from db.models.pis_user import PisUser
 from db.session import get_db
 from db.repository.pis_login import get_user_by_login_or_email
 
@@ -14,7 +14,7 @@ from db.repository.pis_login import get_user_by_login_or_email
 router = APIRouter()
 
 
-def authenticate_user(username: str, password: str, db: Session) -> User or None:
+def authenticate_user(username: str, password: str, db: Session) -> PisUser or None:
     user = get_user_by_login_or_email(user_login_or_email=username, db=db)
     if not user:
         return None
@@ -36,7 +36,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
 
-def get_current_user_from_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+def get_current_user_from_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> PisUser:
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])

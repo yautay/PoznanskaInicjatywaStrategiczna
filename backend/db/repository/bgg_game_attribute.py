@@ -1,13 +1,13 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from schema import Schema, Use, SchemaError
-from db.models.bgg_game_attributes import BggGameAttributes
+from db.models.bgg_game_attribute import BggGameAttribute
 import logging
 
 logger = logging.getLogger('ORMWrapperBggGameAttributes')
 
 
-class ORMWrapperBggGameAttributes(object):
+class ORMWrapperBggGameAttribute(object):
     def __init__(self, db: Session):
         self.db = db
 
@@ -28,18 +28,18 @@ class ORMWrapperBggGameAttributes(object):
 
         if not check_schema():
             return False
-        attribute = BggGameAttributes(**data)
+        attribute = BggGameAttribute(**data)
         try:
             db.add(attribute)
             db.commit()
             return True
         except:
-            logger.critical(f"BggGameAttributes not ADDED to db. instance: {attribute} data: {data}")
+            logger.critical(f"BggGameAttributes not ADDED to db. \n instance: {attribute.to_json()} \n data: {data}")
             return False
 
-    def read(self, data: int) -> BggGameAttributes or None:
+    def read(self, data: int) -> BggGameAttribute or None:
         db = self.db
-        return db.query(BggGameAttributes).filter(BggGameAttributes.id == data).first()
+        return db.query(BggGameAttribute).filter(BggGameAttribute.id == data).first()
 
     def delete(self, data: int or str) -> bool:
         db = self.db

@@ -43,7 +43,8 @@ class ORMWrapperBggGame(object):
                 db.commit()
                 return True
             except:
-                logger.critical(f"BggGame not UPDATED to db. instance: {existing} data: {data}")
+                logger.critical(f"BggGame not UPDATED to db. \n instance: {existing.to_json()} \n data: {data}")
+                logger.exception("msg")
                 return False
         else:
             game = BggGame(**data)
@@ -52,7 +53,8 @@ class ORMWrapperBggGame(object):
                 db.commit()
                 return True
             except:
-                logger.critical(f"BggGame not ADDED to db. instance: {game} data: {data}")
+                logger.critical(f"BggGame not ADDED to db. \n instance: {game.to_json()} \n data: {data}")
+                logger.exception("msg")
                 return False
 
     def read(self, data: int) -> BggGame or None:

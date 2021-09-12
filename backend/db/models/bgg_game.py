@@ -14,7 +14,7 @@ class BggGame(Base):
     game_images = Column(String(2000))
     game_min_players = Column(Integer)
     game_max_players = Column(Integer)
-    game_attribute = relationship("BggGameAttributes")
+    bgggameattributes = relationship("BggGameAttribute", back_populates="bgggame", uselist=False)
 
     def to_json(self):
         return {

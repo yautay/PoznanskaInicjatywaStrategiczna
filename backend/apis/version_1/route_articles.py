@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from db.models.pis_user import User
+from db.models.pis_user import PisUser
 from db.session import get_db
 from schemas.articles import \
     ArticleCreate, \
     ArticleShow
-from db.repository.pis_articles import \
+from db.repository.pis_article import \
     create_new_article, \
     retrieve_article_by_id, \
     retrieve_articles_by_user, \
@@ -20,7 +20,7 @@ router = APIRouter()
 
 
 @router.post("/create", response_model=ArticleShow)
-def create_article(article: ArticleCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user_from_token)):
+def create_article(article: ArticleCreate, db: Session = Depends(get_db), current_user: PisUser = Depends(get_current_user_from_token)):
     if current_user.superuser or current_user.administrator:
         return create_new_article(article=article, db=db, user_id=current_user.id)
     else:
@@ -44,7 +44,7 @@ async def retrieve_article(article_id: int = None, user_id: int = None, db: Sess
 
 
 @router.put("/update/{_id}")
-def update_article(_id: int, article: ArticleCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user_from_token)):
+def update_article(_id: int, article: ArticleCreate, db: Session = Depends(get_db), current_user: PisUser = Depends(get_current_user_from_token)):
     article_stored = retrieve_article_by_id(_id=_id, db=db)
     if article_stored:
         if article_stored.user_id == current_user.id or current_user.superuser:
@@ -57,7 +57,7 @@ def update_article(_id: int, article: ArticleCreate, db: Session = Depends(get_d
 
 
 @router.delete("/delete/{_id}")
-def delete_article(_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user_from_token)):
+def delete_article(_id: int, db: Session = Depends(get_db), current_user: PisUser = Depends(get_current_user_from_token)):
     article = retrieve_article_by_id(_id=_id, db=db)
     if not article:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Article with id {_id} does not exist")

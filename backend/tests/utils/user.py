@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import List
 
-from db.models.pis_user import User
+from db.models.pis_user import PisUser
 from schemas.users import UserCreate
 from db.repository.pis_users import create_new_user
 from tests.utils.randoms import random_lower_string, random_date
@@ -20,27 +20,27 @@ def create_test_users(db: Session, count=10) -> List[List]:
     return users
 
 
-def assert_test_users(retrieved_users: List[User] or User, users: List[User] or User):
+def assert_test_users(retrieved_users: List[PisUser] or PisUser, users: List[PisUser] or PisUser):
     if users is list:
         for user in range(len(retrieved_users)):
             assert retrieved_users[user].id == users[user][0]
             assert retrieved_users[user].login == users[user][1]
             assert retrieved_users[user].email == users[user][2]
             assert retrieved_users[user].hashed_password == users[user][3]
-    elif users is User:
+    elif users is PisUser:
         if retrieved_users is list:
             assert retrieved_users[0].id == users.id
             assert retrieved_users[0].login == users.login
             assert retrieved_users[0].email == users.email
             assert retrieved_users[0].hashed_password == users.hashed_password
-        elif retrieved_users is User:
+        elif retrieved_users is PisUser:
             assert retrieved_users.id == users.id
             assert retrieved_users.login == users.login
             assert retrieved_users.email == users.email
             assert retrieved_users.hashed_password == users.hashed_password
 
 
-def create_random_user(db: Session, data: dict = None) -> User:
+def create_random_user(db: Session, data: dict = None) -> PisUser:
     if not data:
         data = create_random_user_data()
     user_schema = UserCreate(

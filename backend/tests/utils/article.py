@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from typing import List
 
-from db.models.pis_article import Article
+from db.models.pis_article import PisArticle
 from schemas.articles import ArticleCreate
-from db.repository.pis_articles import create_new_article
+from db.repository.pis_article import create_new_article
 from tests.utils.randoms import random_lower_string
 
 
@@ -19,7 +19,7 @@ def create_test_articles(db: Session, user_id=1, count=10) -> list:
         return articles
 
 
-def assert_test_articles(retrieved_articles: List[Article], articles: List[Article]):
+def assert_test_articles(retrieved_articles: List[PisArticle], articles: List[PisArticle]):
     for index in range(len(retrieved_articles)):
         assert retrieved_articles[index].id == articles[index][0]
         assert retrieved_articles[index].article_title == articles[index][1]
@@ -27,7 +27,7 @@ def assert_test_articles(retrieved_articles: List[Article], articles: List[Artic
         assert retrieved_articles[index].article_picture == articles[index][3]
 
 
-def create_random_article(db: Session, user_id=1) -> Article:
+def create_random_article(db: Session, user_id=1) -> PisArticle:
     data = create_random_article_data()
     article_schema = ArticleCreate(article_title=data["article_title"], article_content=data["article_content"], article_picture=data["article_picture"])
     article = create_new_article(article=article_schema, user_id=user_id, db=db)

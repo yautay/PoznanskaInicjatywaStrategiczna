@@ -4,12 +4,12 @@ from sqlalchemy.orm import relationship
 from db.base_class import Base
 
 
-class BggAttributes(Base):
+class BggAttribute(Base):
     id = Column(Integer, primary_key=True)
     attribute_bgg_index = Column(Integer, index=True, nullable=True)
     attribute_bgg_value = Column(String(250), nullable=True)
     attribute_bgg_json = Column(JSON, nullable=True)
-    bgg_game_attributes = relationship("BggGameAttributes")
+    bgggameattribute = relationship("BggGameAttribute", back_populates="bggattribute", uselist=False)
 
     def to_json(self):
         return {

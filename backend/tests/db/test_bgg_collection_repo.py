@@ -1,8 +1,8 @@
 from ..conftests import *
 import json
-from db.repository.bgg_collections import *
+from db.repository.bgg_collection import *
 from tests.utils.user import create_random_user
-from db.repository.bgg_collections import ORMWrapperCollection
+from db.repository.bgg_collection import ORMWrapperCollection
 
 
 path_test_data = os.path.join(os.path.abspath(os.getcwd()), "tests", "utils", "test_data")

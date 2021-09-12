@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from db.base_class import Base
 
 
-class User(Base):
+class PisUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     login = Column(String(50), unique=True, nullable=False)
     hashed_password = Column(String, nullable=False)
@@ -19,5 +19,5 @@ class User(Base):
     superuser = Column(Integer, default=False)
     created = Column(Date, default=datetime.datetime.now())
     is_active = Column(Integer, default=True)
-    article = relationship("Article")
-    collection = relationship("BggUserCollection")
+    articles = relationship("PisArticle", back_populates="user")
+    collections = relationship("BggUserCollection", back_populates="user")

@@ -1,20 +1,20 @@
 import logging
 from schema import Schema, Use, Or, SchemaError
 from sqlalchemy.orm import Session
-from db.models.bgg_attributes import BggAttributes
+from db.models.bgg_attribute import BggAttribute
 
 logger = logging.getLogger('ORMWrapperBggAttributes')
 
 
-class ORMWrapperBggAttributes(object):
+class ORMWrapperBggAttribute(object):
     def __init__(self, db: Session):
         self.db = db
 
     def create(self, data: dict) -> bool:
         db = self.db
 
-        def check_existing() -> BggAttributes or None:
-            return db.query(BggAttributes).filter(BggAttributes.attribute_bgg_index == data["attribute_bgg_index"]).first()
+        def check_existing() -> BggAttribute or None:
+            return db.query(BggAttribute).filter(BggAttribute.attribute_bgg_index == data["attribute_bgg_index"]).first()
 
         def check_schema():
             data_schema = Schema({
@@ -37,21 +37,21 @@ class ORMWrapperBggAttributes(object):
                 db.commit()
                 return True
             except:
-                logger.critical(f"BggAttributes not UPDATED to db. instance: {existing} data: {data}")
+                logger.critical(f"BggAttributes not UPDATED to db. \n instance: {existing.to_json()} \n data: {data}")
                 return False
         else:
-            attribute = BggAttributes(**data)
+            attribute = BggAttribute(**data)
             try:
                 db.add(attribute)
                 db.commit()
                 return True
             except:
-                logger.critical(f"BggAttributes not ADDED to db. instance: {attribute} data: {data}")
+                logger.critical(f"BggAttributes not ADDED to db. \n instance: {attribute.to_json()} \n data: {data}")
                 return False
 
-    def read(self, data: int) -> BggAttributes or None:
+    def read(self, data: int) -> BggAttribute or None:
         db = self.db
-        return db.query(BggAttributes).filter(BggAttributes.id == data).first()
+        return db.query(BggAttribute).filter(BggAttribute.id == data).first()
 
     def delete(self, data: int or str) -> bool:
         db = self.db
