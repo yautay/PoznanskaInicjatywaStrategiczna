@@ -1,14 +1,14 @@
-from client.client_bgg.model.collection import Collection
-from client.client_bgg.model.family import Family
-from client.client_bgg.model.forums import Forums
-from client.client_bgg.model.guilds import Guilds
-from client.client_bgg.model.thing import Thing
-from client.client_bgg.model.threads import Threads
-from client.client_bgg.model.user import User
-from client.client_bgg.model.forumlist import ForumList
-from client.client_bgg.model.plays import Plays
-from client.client_bgg.model.hot_items import HotItems
-from client.client_bgg.model.search import Search
+from client.client_bgg.queries.collection import Collection
+from client.client_bgg.queries.family import Family
+from client.client_bgg.queries.forums import Forums
+from client.client_bgg.queries.guilds import Guilds
+from client.client_bgg.queries.thing import Thing
+from client.client_bgg.queries.threads import Threads
+from client.client_bgg.queries.user import User
+from client.client_bgg.queries.forumlist import ForumList
+from client.client_bgg.queries.plays import Plays
+from client.client_bgg.queries.hot_items import HotItems
+from client.client_bgg.queries.search import Search
 
 
 class TestWrapper:

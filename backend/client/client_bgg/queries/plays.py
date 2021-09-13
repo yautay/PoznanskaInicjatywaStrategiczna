@@ -2,7 +2,7 @@ import re
 
 from client.client_bgg.lib.parameter import Parameter
 from client.client_bgg.data.types import PlaysType, SubType
-from client.client_bgg.model.base_model import BaseModel
+from client.client_bgg.queries.base_model import BaseModel
 from client.client_bgg.data import data_client_bgg
 
 compiled = re.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")

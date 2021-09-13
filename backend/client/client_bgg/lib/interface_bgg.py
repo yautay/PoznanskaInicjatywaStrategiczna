@@ -1,7 +1,7 @@
 import time
 import requests
 import logging
-from client.client_bgg.model import *
+from client.client_bgg.queries import *
 from client.client_bgg.parser import *
 
 logger = logging.getLogger("InterfaceBgg")

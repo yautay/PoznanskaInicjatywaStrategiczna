@@ -1,6 +1,6 @@
 from client.client_bgg.lib.interface_bgg import InterfaceBgg
-from client.client_bgg.model.collection import Collection
-from client.client_bgg.model.thing import Thing
+from client.client_bgg.queries.collection import Collection
+from client.client_bgg.queries.thing import Thing
 
 
 class BggClient(InterfaceBgg):

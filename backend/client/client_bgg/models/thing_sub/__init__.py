@@ -1,0 +1,1 @@
+from .bgg_object import BggObject, BggObjects

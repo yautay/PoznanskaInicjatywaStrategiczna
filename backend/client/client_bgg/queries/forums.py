@@ -1,5 +1,5 @@
 from client.client_bgg.lib.parameter import Parameter
-from client.client_bgg.model.base_model import BaseModel
+from client.client_bgg.queries.base_model import BaseModel
 from client.client_bgg.data import data_client_bgg
 
 
