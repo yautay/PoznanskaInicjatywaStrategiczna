@@ -4,24 +4,24 @@ from client.client_bgg.models.thing_sub import *
 
 class Thing(object):
     def __init__(self,
-                 game_index: int or None = None,
-                 name: int or None = None,
-                 description: int or None = None,
-                 published: str or None = None,
-                 thumbnails: int or None = None,
-                 images: int or None = None,
-                 min_players: int or None = None,
-                 max_players: int or None = None,
-                 designers: BggObjects or None = None,
-                 artists: BggObjects or None = None,
-                 publishers: BggObjects or None = None,
-                 boardgame_categories: BggObjects or None = None,
-                 boardgame_mechanics: BggObjects or None = None,
-                 boardgame_family: BggObjects or None = None,
-                 boardgame_versions: Versions or None = None,
-                 boardgame_expansions: Expansions or None = None,
-                 marketplace: Marketplace or None = None,
-                 boardgame_implementations: Implementations or None = None):
+                 game_index: int = None,
+                 name: int = None,
+                 description: int = None,
+                 published: str = None,
+                 thumbnails: int = None,
+                 images: int = None,
+                 min_players: int = None,
+                 max_players: int = None,
+                 designers: BggObjects = None,
+                 artists: BggObjects = None,
+                 publishers: BggObjects = None,
+                 boardgame_categories: BggObjects = None,
+                 boardgame_mechanics: BggObjects = None,
+                 boardgame_family: BggObjects = None,
+                 boardgame_versions: Versions = None,
+                 boardgame_expansions: BggObjects = None,
+                 marketplace: Marketplace = None,
+                 boardgame_implementations: BggObjects = None):
         self._game_index = game_index
         self._name = name
         self._description = description
@@ -162,11 +162,11 @@ class Thing(object):
         self._boardgame_versions = value
 
     @property
-    def boardgame_expansions(self) -> Expansions:
+    def boardgame_expansions(self) -> BggObjects:
         return self._boardgame_expansions
 
     @boardgame_expansions.setter
-    def boardgame_expansions(self, value: Expansions):
+    def boardgame_expansions(self, value: BggObjects):
         self._boardgame_expansions = value
 
     @property
@@ -178,11 +178,11 @@ class Thing(object):
         self._marketplace = value
 
     @property
-    def boardgame_implementations(self) -> Implementations:
+    def boardgame_implementations(self) -> BggObjects:
         return self._boardgame_implementations
 
     @boardgame_implementations.setter
-    def boardgame_implementations(self, value: Implementations):
+    def boardgame_implementations(self, value: BggObjects):
         self._boardgame_implementations = value
 
     def to_string(self) -> dict:
@@ -201,8 +201,8 @@ class Thing(object):
             "boardgame_categories": self._boardgame_categories.to_string(),
             "boardgame_mechanics": self._boardgame_mechanics.to_string(),
             "boardgame_family": self._boardgame_family.to_string(),
-            "boardgame_versions": self._boardgame_versions,
-            "boardgame_expansions": self._boardgame_expansions,
-            "marketplace": self._marketplace,
-            "boardgame_implementations": self._boardgame_implementations
+            "boardgame_versions": self._boardgame_versions.to_string(),
+            "boardgame_expansions": self._boardgame_expansions.to_string(),
+            "marketplace": self._marketplace.to_string(),
+            "boardgame_implementations": self._boardgame_implementations.to_string()
         }
