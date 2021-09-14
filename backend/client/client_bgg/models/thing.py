@@ -1,27 +1,27 @@
 from typing import List
-from client.client_bgg.models.thing_sub import *
+from client.client_bgg.models.thing_bgg_object import BggObjects
 
 
 class Thing(object):
     def __init__(self,
-                 game_index: int = None,
-                 name: int = None,
-                 description: int = None,
-                 published: str = None,
-                 thumbnails: int = None,
-                 images: int = None,
-                 min_players: int = None,
-                 max_players: int = None,
-                 designers: BggObjects = None,
-                 artists: BggObjects = None,
-                 publishers: BggObjects = None,
-                 boardgame_categories: BggObjects = None,
-                 boardgame_mechanics: BggObjects = None,
-                 boardgame_family: BggObjects = None,
-                 boardgame_versions: Versions = None,
-                 boardgame_expansions: BggObjects = None,
-                 marketplace: Marketplace = None,
-                 boardgame_implementations: BggObjects = None):
+                 game_index: int,
+                 name: int,
+                 description: int,
+                 published: str,
+                 thumbnails: int,
+                 images: int,
+                 min_players: int,
+                 max_players: int,
+                 designers: BggObjects,
+                 artists: BggObjects,
+                 publishers: BggObjects,
+                 boardgame_categories: BggObjects,
+                 boardgame_mechanics: BggObjects,
+                 boardgame_family: BggObjects,
+                 boardgame_versions: BggObjects,
+                 boardgame_expansions: BggObjects,
+                 marketplace: BggObjects,
+                 boardgame_implementations: BggObjects):
         self._game_index = game_index
         self._name = name
         self._description = description
@@ -154,11 +154,11 @@ class Thing(object):
         self._boardgame_family = value
 
     @property
-    def boardgame_versions(self) -> Versions:
+    def boardgame_versions(self) -> BggObjects:
         return self._boardgame_versions
 
     @boardgame_versions.setter
-    def boardgame_versions(self, value: Versions):
+    def boardgame_versions(self, value: BggObjects):
         self._boardgame_versions = value
 
     @property
@@ -170,11 +170,11 @@ class Thing(object):
         self._boardgame_expansions = value
 
     @property
-    def marketplace(self) -> Marketplace:
+    def marketplace(self) -> BggObjects:
         return self._marketplace
 
     @marketplace.setter
-    def marketplace(self, value: Marketplace):
+    def marketplace(self, value: BggObjects):
         self._marketplace = value
 
     @property

@@ -1,16 +1,41 @@
+from typing import List
+
 from client.client_bgg.parser.base_parser import Parser, ParserWrapper
+from client.client_bgg.models.thing import Thing
+from client.client_bgg.models.thing_version import ThingVersion
+from client.client_bgg.models.thing_marketplace import ThingMarketplace
+from client.client_bgg.models.thing_bgg_object import BggObject, BggObjects
 from client.client_bgg.parser.item_keys import ThingItemKeys as key
 
 
 class ThingParser(Parser, ParserWrapper):
-    def parse_data(self, xml_data: str) -> dict:
-        items = {}
+    def parse_data(self, xml_data: str) -> List[Thing]:
+        games = []
         root = self.get_root(xml_data)
         for item in root:
-            items[item.attrib["id"]] = self.parse_item(item)
-        return items
+            games.append(self.parse_item(item))
+        return games
 
     def parse_item(self, item) -> dict:
+        game_index: int
+        name: int
+        description: int
+        published: str
+        thumbnails: int
+        images: int
+        min_players: int
+        max_players: int
+        designers: BggObjects
+        artists: BggObjects
+        publishers: BggObjects
+        boardgame_categories: BggObjects
+        boardgame_mechanics: BggObjects
+        boardgame_family: BggObjects
+        boardgame_versions: BggObjects
+        boardgame_expansions: BggObjects
+        marketplace: BggObjects
+        boardgame_implementations: BggObjects
+
         thing = ThingModel()
         thing.data[key.NAME] = self.get_boardgame_name(item)
         thing.data[key.DESCRIPTION] = self.get_boardgame_description(item)
@@ -70,35 +95,35 @@ class ThingParser(Parser, ParserWrapper):
         return self.link_extractor(item, "boardgamemechanic")
 
     @staticmethod
-    def get_boardgame_min_players(item):
+    def get_boardgame_min_players(item) -> str or None:
         for element in item:
             if element.tag == "minplayers":
                 return element.attrib["value"]
         return None
 
     @staticmethod
-    def get_boardgame_max_players(item):
+    def get_boardgame_max_players(item) -> str or None:
         for element in item:
             if element.tag == "maxplayers":
                 return element.attrib["value"]
         return None
 
     @staticmethod
-    def get_boardgame_published(item):
+    def get_boardgame_published(item) -> str or None:
         for element in item:
             if element.tag == "yearpublished":
                 return element.attrib["value"]
         return None
 
     @staticmethod
-    def get_boardgame_thumbnails(item):
+    def get_boardgame_thumbnails(item) -> str or None:
         for element in item:
             if element.tag == "thumbnail":
                 return element.text
         return None
 
     @staticmethod
-    def get_boardgame_images(item):
+    def get_boardgame_images(item) -> str or None:
         for element in item:
             if element.tag == "image":
                 return element.text
@@ -158,7 +183,7 @@ class ThingParser(Parser, ParserWrapper):
         return data
 
     @staticmethod
-    def link_extractor(item, attribute: str):
+    def link_extractor(item, attribute: str) -> List[int, str]:
         data = []
         for element in item:
             if element.tag == "link" and element.attrib["type"] == attribute:

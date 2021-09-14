@@ -1,17 +1,20 @@
+import datetime
+
+
 class Collection(object):
     def __init__(self,
-                 game_index: int = None,
-                 own: int = None,
-                 numplays: int = None,
-                 comment: str = None,
-                 prevowned: int = None,
-                 fortrade: int = None,
-                 want: int= None,
-                 wanttoplay: int = None,
-                 wanttobuy: int = None,
-                 wishlist: int = None,
-                 preordered: int = None,
-                 lastmodified: int = None):
+                 game_index: int,
+                 own: int,
+                 numplays: int,
+                 comment: str,
+                 prevowned: int,
+                 fortrade: int,
+                 want: int,
+                 wanttoplay: int,
+                 wanttobuy: int,
+                 wishlist: int,
+                 preordered: int,
+                 lastmodified: datetime.date):
 
         self._game_index = game_index
         self._own = own
@@ -115,11 +118,11 @@ class Collection(object):
         self._preordered = value
 
     @property
-    def lastmodified(self) -> int:
+    def lastmodified(self) -> datetime.date:
         return self._lastmodified
 
     @lastmodified.setter
-    def lastmodified(self, value: int):
+    def lastmodified(self, value: datetime.date):
         self._lastmodified = value
 
     def to_string(self):
@@ -135,5 +138,5 @@ class Collection(object):
             "wanttobuy": self._wanttobuy,
             "wishlist": self._wishlist,
             "preordered": self._preordered,
-            "lastmodified": self._lastmodified
+            "lastmodified": self._lastmodified.isoformat()
         }

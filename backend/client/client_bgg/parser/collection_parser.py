@@ -1,69 +1,72 @@
+import datetime
+from typing import List
+
 from client.client_bgg.parser.base_parser import Parser, ParserWrapper
+from client.client_bgg.models.collection import Collection
 from client.client_bgg.parser.item_keys import CollectionItemKeys as key
 
 
 class CollectionParser(Parser, ParserWrapper):
-    def parse_data(self, xml_data: str) -> dict:
-        items = {}
+    def parse_data(self, xml_data: str) -> List[Collection]:
+        usr_collection = []
         root = self.get_root(xml_data)
         for item in root:
-            items[item.attrib["objectid"]] = self.parse_item(item)
-        return items
+            usr_collection.append(self.parse_item(item))
+        return usr_collection
 
     def parse_item(self, item):
-        entity = CollectionModel()
+        en_game_index: int
+        en_own: int
+        en_numplays: int
+        en_comment: str
+        en_prevowned: int
+        en_fortrade: int
+        en_want: int
+        en_wanttoplay: int
+        en_wanttobuy: int
+        en_wishlist: int
+        en_preordered: int
+        en_lastmodified: datetime.date
+
+        def parse_status(element):
+            status = {}
+            for i in element:
+                if i[0] == key.OWN:
+                    self.en_own = i[1]
+                if i[0] == key.PREVOWNED:
+                    self.en_prevowned = i[1]
+                elif i[0] == key.FORTRADE:
+                    self.en_fortrade = i[1]
+                elif i[0] == key.WANT:
+                    self.en_want = i[1]
+                elif i[0] == key.WANTTOPLAY:
+                    self.en_wanttoplay = i[1]
+                elif i[0] == key.WANTTOBUY:
+                    self.en_wanttobuy = i[1]
+                elif i[0] == key.WISHLIST:
+                    self.en_wishlist = i[1]
+                elif i[0] == key.PREORDERED:
+                    self.en_preordered = i[1]
+                elif i[0] == key.LASTMODIFIED:
+                    self.en_lastmodified = datetime.date.fromisoformat(i[1])
+
         for element in item:
             if element.tag == key.NUMPLAYS:
-                entity.data[key.NUMPLAYS] = element.text
+                en_numplays = element.text
             elif element.tag == key.COMMENT:
-                entity.data[key.COMMENT] = element.text
+                en_comment = element.text
             elif element.tag == key.STATUS:
-                entity.data[key.STATUS] = self.parse_status(element.attrib.items())
-        return entity.data
+                parse_status(element.attrib.items())
 
-    @staticmethod
-    def parse_status(element):
-        status = {}
-        for i in element:
-            if i[0] == key.OWN:
-                status[key.OWN] = i[1]
-            if i[0] == key.PREVOWNED:
-                status[key.PREVOWNED] = i[1]
-            elif i[0] == key.FORTRADE:
-                status[key.FORTRADE] = i[1]
-            elif i[0] == key.WANT:
-                status[key.WANT] = i[1]
-            elif i[0] == key.WANTTOPLAY:
-                status[key.WANTTOPLAY] = i[1]
-            elif i[0] == key.WANTTOBUY:
-                status[key.WANTTOBUY] = i[1]
-            elif i[0] == key.WISHLIST:
-                status[key.WISHLIST] = i[1]
-            elif i[0] == key.PREORDERED:
-                status[key.PREORDERED] = i[1]
-            elif i[0] == key.LASTMODIFIED:
-                status[key.LASTMODIFIED] = i[1]
-        return status
-
-
-class CollectionModel(object):
-    def __init__(self):
-        self.__data = {
-            key.NUMPLAYS: None,
-            key.COMMENT: None,
-            key.STATUS: {
-                key.OWN: None,
-                key.PREVOWNED: None,
-                key.FORTRADE: None,
-                key.WANT: None,
-                key.WANTTOPLAY: None,
-                key.WANTTOBUY: None,
-                key.WISHLIST: None,
-                key.PREORDERED: None,
-                key.LASTMODIFIED: None,
-            }
-        }
-
-    @property
-    def data(self):
-        return self.__data
+        return Collection(game_index=en_game_index,
+                          own=en_own,
+                          numplays=en_numplays,
+                          comment=en_comment,
+                          fortrade=en_fortrade,
+                          want=en_want,
+                          wanttobuy=en_wanttobuy,
+                          preordered=en_preordered,
+                          prevowned=en_prevowned,
+                          wishlist=en_wishlist,
+                          wanttoplay=en_wanttoplay,
+                          lastmodified=en_lastmodified)

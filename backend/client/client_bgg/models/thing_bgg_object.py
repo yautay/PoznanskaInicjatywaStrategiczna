@@ -32,8 +32,8 @@ class BggObject(object):
 
 
 class BggObjects(object):
-    def __init__(self, bgg_objects: List[BggObject]):
-        self._bgg_objects = bgg_objects
+    def __init__(self, objects: List[BggObject]):
+        self._objects = objects
 
     @property
     def bgg_objects(self):
@@ -41,13 +41,13 @@ class BggObjects(object):
 
     @bgg_objects.setter
     def bgg_objects(self, value: List[BggObject]):
-        self._bgg_objects = value
+        self._objects = value
 
-    def add_bgg_object(self, artist: BggObject):
-        self._bgg_objects.append(artist)
+    def add_bgg_object(self, _object: BggObject):
+        self._objects.append(_object)
 
     def to_string(self) -> List[dict]:
-        bgg_objects = []
-        for v in self._bgg_objects:
-            bgg_objects.append(v.to_string())
-        return bgg_objects
+        objects = []
+        for v in self._objects:
+            objects.append(v.to_string())
+        return objects
