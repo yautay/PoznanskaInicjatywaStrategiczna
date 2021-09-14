@@ -5,7 +5,7 @@ from client.client_bgg.models.thing_bgg_object import BggObject
 
 class ThingMarketplace(object):
     def __init__(self,
-                 listdate: datetime.date,
+                 listdate: datetime,
                  price: str,
                  currency: str,
                  condition: str,
@@ -28,12 +28,12 @@ class ThingMarketplace(object):
         self._bgg_index = value
 
     @property
-    def listdate(self) -> datetime.date:
+    def listdate(self) -> datetime:
         return self._listdate
 
     @listdate.setter
-    def listdate(self, value: datetime.date):
-        self._listdate = value
+    def listdate(self, value: str):
+        self._listdate = datetime.datetime.fromisoformat(value)
 
     @property
     def price(self) -> str:

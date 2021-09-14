@@ -14,7 +14,7 @@ class Collection(object):
                  wanttobuy: int,
                  wishlist: int,
                  preordered: int,
-                 lastmodified: datetime.date):
+                 lastmodified: str):
 
         self._game_index = game_index
         self._own = own
@@ -122,8 +122,8 @@ class Collection(object):
         return self._lastmodified
 
     @lastmodified.setter
-    def lastmodified(self, value: datetime.date):
-        self._lastmodified = value
+    def lastmodified(self, value: str):
+        self._lastmodified = datetime.datetime.fromisoformat(value)
 
     def to_string(self):
         return {

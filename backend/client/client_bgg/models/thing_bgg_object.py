@@ -32,22 +32,22 @@ class BggObject(object):
 
 
 class BggObjects(object):
-    def __init__(self, objects: List[BggObject]):
-        self._objects = objects
+    def __init__(self, objects: List[object] or None = None):
+        self.bgg_objects = objects
 
     @property
     def bgg_objects(self):
-        return self._bgg_objects
+        return self.bgg_objects
 
     @bgg_objects.setter
-    def bgg_objects(self, value: List[BggObject]):
-        self._objects = value
+    def bgg_objects(self, value: List[object]):
+        self.bgg_objects = value
 
-    def add_bgg_object(self, _object: BggObject):
-        self._objects.append(_object)
+    def add_bgg_object(self, _object: object):
+        self.bgg_objects.append(_object)
 
     def to_string(self) -> List[dict]:
         objects = []
-        for v in self._objects:
+        for v in self.bgg_objects:
             objects.append(v.to_string())
         return objects

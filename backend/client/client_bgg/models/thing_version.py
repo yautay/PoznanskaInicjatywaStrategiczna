@@ -1,18 +1,18 @@
 import datetime
 from typing import List
-from client.client_bgg.models.thing_bgg_object import BggObject
+from client.client_bgg.models.thing_bgg_object import BggObject, BggObjects
 
 
 class ThingVersion(object):
     def __init__(self,
                  bgg_index: int,
-                 name: BggObject,
-                 publisher: BggObject,
-                 artist: BggObject,
+                 name: BggObjects,
+                 publisher: BggObjects,
+                 artist: BggObjects,
                  thumbnail: str,
                  image: str,
                  description: str,
-                 yearpublished: datetime.date
+                 yearpublished: str
                  ):
         self._bgg_index = bgg_index
         self._name = name
@@ -21,7 +21,7 @@ class ThingVersion(object):
         self._thumbnail = thumbnail
         self._image = image
         self._description = description
-        self._yearpublished = yearpublished
+        self._yearpublished = datetime.datetime.strptime(yearpublished, '%Y')
 
     @property
     def bgg_index(self) -> int:
@@ -32,27 +32,27 @@ class ThingVersion(object):
         self._bgg_index = value
 
     @property
-    def name(self) -> BggObject:
+    def name(self) -> BggObjects:
         return self._name
 
     @name.setter
-    def name(self, value: BggObject):
+    def name(self, value: BggObjects):
         self._name = value
 
     @property
-    def publisher(self) -> BggObject:
+    def publisher(self) -> BggObjects:
         return self._publisher
 
     @publisher.setter
-    def publisher(self, value: BggObject):
+    def publisher(self, value: BggObjects):
         self._publisher = value
 
     @property
-    def artist(self) -> BggObject:
+    def artist(self) -> BggObjects:
         return self._artist
 
     @artist.setter
-    def artist(self, value: BggObject):
+    def artist(self, value: BggObjects):
         self._artist = value
 
     @property
@@ -84,8 +84,8 @@ class ThingVersion(object):
         return self._yearpublished
 
     @yearpublished.setter
-    def yearpublished(self, value: datetime.date):
-        self._yearpublished = value
+    def yearpublished(self, value: str):
+        self._yearpublished = datetime.datetime.strptime(value, '%Y')
 
     def to_string(self) -> dict:
         return {
@@ -96,5 +96,5 @@ class ThingVersion(object):
             "thumbnail": self._thumbnail,
             "image": self._image,
             "description": self._description,
-            "yearpublished": self._yearpublished.strftime('%Y')
+            "yearpublished": self._yearpublished.year
         }

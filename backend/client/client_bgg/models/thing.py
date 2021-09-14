@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 from client.client_bgg.models.thing_bgg_object import BggObjects
 
@@ -8,8 +9,8 @@ class Thing(object):
                  name: int,
                  description: int,
                  published: str,
-                 thumbnails: int,
-                 images: int,
+                 thumbnails: str,
+                 images: str,
                  min_players: int,
                  max_players: int,
                  designers: BggObjects,
@@ -25,7 +26,7 @@ class Thing(object):
         self._game_index = game_index
         self._name = name
         self._description = description
-        self._published = published
+        self._published = datetime.datetime.strptime(published, '%Y')
         self._thumbnails = thumbnails
         self._images = images
         self._min_players = min_players
@@ -66,27 +67,27 @@ class Thing(object):
         self._description = value
 
     @property
-    def published(self) -> str:
+    def published(self) -> datetime.date:
         return self._published
 
     @published.setter
     def published(self, value: str):
-        self._published = value
+        self._published = datetime.datetime.strptime(value, '%Y')
 
     @property
-    def thumbnails(self) -> int:
+    def thumbnails(self) -> str:
         return self._thumbnails
 
     @thumbnails.setter
-    def thumbnails(self, value: int):
+    def thumbnails(self, value: str):
         self._thumbnails = value
 
     @property
-    def images(self) -> int:
+    def images(self) -> str:
         return self._images
 
     @images.setter
-    def images(self, value: int):
+    def images(self, value: str):
         self._images = value
 
     @property
@@ -190,7 +191,7 @@ class Thing(object):
             "game_index": self._game_index,
             "name": self._name,
             "description": self._description,
-            "published": self._published,
+            "published": self._published.year,
             "thumbnails": self._thumbnails,
             "images": self._images,
             "min_players": self._min_players,
