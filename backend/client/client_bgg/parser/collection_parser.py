@@ -1,6 +1,4 @@
-import datetime
 from typing import List
-
 from client.client_bgg.parser.base_parser import Parser, ParserWrapper
 from client.client_bgg.models.collection import Collection
 from client.client_bgg.parser.item_keys import CollectionItemKeys as key
@@ -14,41 +12,20 @@ class CollectionParser(Parser, ParserWrapper):
             usr_collection.append(self.parse_item(item))
         return usr_collection
 
-    def parse_item(self, item):
-        en_game_index: int
-        en_own: int
-        en_numplays: int
-        en_comment: str
-        en_prevowned: int
-        en_fortrade: int
-        en_want: int
-        en_wanttoplay: int
-        en_wanttobuy: int
-        en_wishlist: int
-        en_preordered: int
-        en_lastmodified: datetime.date
-
-        def parse_status(element):
-            status = {}
-            for i in element:
-                if i[0] == key.OWN:
-                    self.en_own = i[1]
-                if i[0] == key.PREVOWNED:
-                    self.en_prevowned = i[1]
-                elif i[0] == key.FORTRADE:
-                    self.en_fortrade = i[1]
-                elif i[0] == key.WANT:
-                    self.en_want = i[1]
-                elif i[0] == key.WANTTOPLAY:
-                    self.en_wanttoplay = i[1]
-                elif i[0] == key.WANTTOBUY:
-                    self.en_wanttobuy = i[1]
-                elif i[0] == key.WISHLIST:
-                    self.en_wishlist = i[1]
-                elif i[0] == key.PREORDERED:
-                    self.en_preordered = i[1]
-                elif i[0] == key.LASTMODIFIED:
-                    self.en_lastmodified = datetime.date.fromisoformat(i[1])
+    @staticmethod
+    def parse_item(item):
+        en_game_index: int = item.attrib["objectid"]
+        en_own = None
+        en_numplays = None
+        en_comment = None
+        en_prevowned = None
+        en_fortrade = None
+        en_want = None
+        en_wanttoplay = None
+        en_wanttobuy = None
+        en_wishlist = None
+        en_preordered = None
+        en_lastmodified = None
 
         for element in item:
             if element.tag == key.NUMPLAYS:
@@ -56,7 +33,15 @@ class CollectionParser(Parser, ParserWrapper):
             elif element.tag == key.COMMENT:
                 en_comment = element.text
             elif element.tag == key.STATUS:
-                parse_status(element.attrib.items())
+                en_own = element.attrib["own"]
+                en_prevowned = element.attrib["prevowned"]
+                en_fortrade = element.attrib["fortrade"]
+                en_want = element.attrib["want"]
+                en_wanttoplay = element.attrib["wanttoplay"]
+                en_wanttobuy = element.attrib["wanttobuy"]
+                en_wishlist = element.attrib["wishlist"]
+                en_preordered = element.attrib["preordered"]
+                en_lastmodified = element.attrib["lastmodified"]
 
         return Collection(game_index=en_game_index,
                           own=en_own,
