@@ -9,11 +9,11 @@ class Thing(BaseModel):
     def __init__(self,
                  _id: int or List[int],
                  _type: List[str] = ThingType.BOARDGAME,
-                 versions: int = 0,
+                 versions: int = 1,
                  videos: int = 0,
                  stats: int = 0,
                  historical: int = 0,
-                 marketplace: int = 0,
+                 marketplace: int = 1,
                  comments: int = 0,
                  page: int = 1,
                  pagesize: int = 10):

@@ -38,7 +38,7 @@ class BggObjects(object):
             self._bgg_objects = []
 
     @property
-    def bgg_objects(self):
+    def bgg_objects(self) -> List[BggObject]:
         return self._bgg_objects
 
     @bgg_objects.setter

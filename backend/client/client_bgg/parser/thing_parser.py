@@ -195,7 +195,6 @@ class ThingParser(Parser, ParserWrapper):
                     objects.add_bgg_object(parse_offer(offer))
         return objects
 
-
     @staticmethod
     def link_extractor(item, attribute: str) -> BggObjects:
         objects = BggObjects()

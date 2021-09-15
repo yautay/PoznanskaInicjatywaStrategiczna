@@ -6,7 +6,7 @@ from client.client_bgg.models.thing_bgg_object import BggObjects
 class Thing(object):
     def __init__(self,
                  game_index: int,
-                 name: int,
+                 name: str,
                  description: int,
                  published: str,
                  thumbnails: str,
@@ -51,11 +51,11 @@ class Thing(object):
         self._game_index = value
 
     @property
-    def name(self) -> int:
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, value: int):
+    def name(self, value: str):
         self._name = value
 
     @property
