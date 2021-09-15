@@ -118,12 +118,12 @@ class Collection(object):
         self._preordered = value
 
     @property
-    def lastmodified(self) -> datetime.date:
+    def lastmodified(self) -> str:
         return self._lastmodified
 
     @lastmodified.setter
     def lastmodified(self, value: str):
-        self._lastmodified = datetime.datetime.fromisoformat(value)
+        self._lastmodified = value
 
     def to_string(self):
         return {
@@ -138,5 +138,5 @@ class Collection(object):
             "wanttobuy": self._wanttobuy,
             "wishlist": self._wishlist,
             "preordered": self._preordered,
-            "lastmodified": self._lastmodified.isoformat()
+            "lastmodified": self._lastmodified
         }

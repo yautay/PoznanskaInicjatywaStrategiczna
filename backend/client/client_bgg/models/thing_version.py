@@ -21,7 +21,7 @@ class ThingVersion(object):
         self._thumbnail = thumbnail
         self._image = image
         self._description = description
-        self._yearpublished = datetime.datetime.strptime(yearpublished, '%Y')
+        self._yearpublished = yearpublished
 
     @property
     def bgg_index(self) -> int:
@@ -80,12 +80,12 @@ class ThingVersion(object):
         self._description = value
 
     @property
-    def yearpublished(self) -> datetime.date:
+    def yearpublished(self) -> str:
         return self._yearpublished
 
     @yearpublished.setter
     def yearpublished(self, value: str):
-        self._yearpublished = datetime.datetime.strptime(value, '%Y')
+        self._yearpublished = value
 
     def to_string(self) -> dict:
         return {
@@ -96,5 +96,5 @@ class ThingVersion(object):
             "thumbnail": self._thumbnail,
             "image": self._image,
             "description": self._description,
-            "yearpublished": self._yearpublished.year
+            "yearpublished": self._yearpublished
         }

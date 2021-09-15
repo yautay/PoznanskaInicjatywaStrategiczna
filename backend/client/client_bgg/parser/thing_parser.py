@@ -15,7 +15,7 @@ class ThingParser(Parser, ParserWrapper):
         return games
 
     def parse_item(self, item) -> Thing:
-        game_index = int
+        game_index = self.get_boardgame_index(item)
         name = self.get_boardgame_name(item)
         description = self.get_boardgame_description(item)
         published = self.get_boardgame_published(item)
@@ -52,6 +52,10 @@ class ThingParser(Parser, ParserWrapper):
                      boardgame_expansions=boardgame_expansions,
                      marketplace=marketplace,
                      boardgame_implementations=boardgame_implementations)
+
+    @staticmethod
+    def get_boardgame_index(item) -> int:
+        return item.attrib["id"]
 
     @staticmethod
     def get_boardgame_name(item) -> str or None:
@@ -188,24 +192,9 @@ class ThingParser(Parser, ParserWrapper):
         for element in item:
             if element.tag == "marketplacelistings":
                 for offer in element:
-                    objects.add_bgg_object(self.parse_offer(offer))
+                    objects.add_bgg_object(parse_offer(offer))
         return objects
 
-    @staticmethod
-    def parse_offer(offer) -> ThingMarketplace or None:
-        data = {}
-        for element in offer:
-            if element.tag == "condition":
-                data["condition"] = element.attrib["value"]
-            elif element.tag == "price":
-                data["price"] = [element.attrib["value"], element.attrib["currency"]]
-            elif element.tag == "link":
-                data["link"] = element.attrib["href"]
-            elif element.tag == "notes":
-                data["notes"] = element.attrib["value"]
-            elif element.tag == "listdate":
-                data["listdate"] = element.attrib["value"]
-        return data
 
     @staticmethod
     def link_extractor(item, attribute: str) -> BggObjects:

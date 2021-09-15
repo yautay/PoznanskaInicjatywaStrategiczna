@@ -26,7 +26,7 @@ class Thing(object):
         self._game_index = game_index
         self._name = name
         self._description = description
-        self._published = datetime.datetime.strptime(published, '%Y')
+        self._published = published
         self._thumbnails = thumbnails
         self._images = images
         self._min_players = min_players
@@ -67,12 +67,12 @@ class Thing(object):
         self._description = value
 
     @property
-    def published(self) -> datetime.date:
+    def published(self) -> str:
         return self._published
 
     @published.setter
     def published(self, value: str):
-        self._published = datetime.datetime.strptime(value, '%Y')
+        self._published = value
 
     @property
     def thumbnails(self) -> str:
@@ -191,7 +191,7 @@ class Thing(object):
             "game_index": self._game_index,
             "name": self._name,
             "description": self._description,
-            "published": self._published.year,
+            "published": self._published,
             "thumbnails": self._thumbnails,
             "images": self._images,
             "min_players": self._min_players,
