@@ -1,6 +1,9 @@
 import json
 import logging
 from ..conftests import *
+from db.repository.bgg_game import ORMWrapperBggGame
+from db.repository.bgg_attribute import ORMWrapperBggAttribute
+from db.repository.bgg_game_attribute import ORMWrapperBggGameAttribute
 
 logger = logging.getLogger("TestsBgg")
 
@@ -19,6 +22,6 @@ def test_synchro_collection_by_user_not_authorized(client, normal_user_token_hea
 
 
 def test_synchro_collection_process(client, super_user_token_headers):
-    data = {"bgg_user": "test"}
+    data = {"bgg_user": "yautay"}
     response = client.post("/bgg/collection", json.dumps(data), headers=super_user_token_headers)
     assert response.status_code == 200

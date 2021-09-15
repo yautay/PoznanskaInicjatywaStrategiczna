@@ -13,7 +13,7 @@ class Collection(BaseModel):
                  excludesubtype: str = None,
                  _id: List[int] = None,
                  stats: int = 0,
-                 own: int = 1,
+                 own: int = None,
                  rated: int = None,
                  played: int = None,
                  comment: int = None,
