@@ -8,10 +8,12 @@ from client.client_bgg.models.collection import Collection as CollectionModel
 from client.client_bgg.queries.thing import Thing as ThingQuery
 from client.client_bgg.models.thing import Thing as ThingModel
 from client.client_bgg.models.thing_bgg_object import BggObject
+from client.client_bgg.models.thing_marketplace import ThingMarketplace
 from db.repository.bgg_game import ORMWrapperBggGame
 from db.repository.bgg_attribute import ORMWrapperBggAttribute
 from db.repository.bgg_user_collection import ORMWrapperBggUserCollection
 from db.repository.bgg_game_attribute import ORMWrapperBggGameAttribute
+# from db.repository.bgg_game_marketplace import ORMWrapperBggGameMarketplace
 from db.models.bgg_game import BggGame
 from db.models.bgg_game_attribute import BggGameAttribute
 from db.models.bgg_user_collection import BggUserCollection
@@ -67,21 +69,21 @@ class BggClientInterface(object):
         logger.debug("Game {} added to db: {}".format(game_data, control))
         return control
 
-    def __add_marketplace(self, game_obj: ThingModel) -> bool:
+    def __add_marketplace(self, game_obj: ThingModel or object) -> bool:
+        marketplace_obj = game_obj.marketplace.bgg_objects
+        for offer in marketplace_obj:
+            control = self.__add_offer(offer)
+            logger.debug("Marketplace offer {} added to db: {}".format(offer.to_string(), control))
+
+    def __add_offer(self, offer: ThingMarketplace) -> bool:
         marketplace_data = {
-            # TODO TERATU
-            "game_index": game_obj.game_index,
-            "game_name": game_obj.name,
-            "game_description": game_obj.description,
-            "game_published": datetime.strptime(game_obj.published, "%Y"),
-            "game_thumbnails": game_obj.thumbnails,
-            "game_images": game_obj.images,
-            "game_min_players": game_obj.min_players,
-            "game_max_players": game_obj.max_players
-        }
-        control = ORMWrapperBggGame(db=self.db).create(data=game_data)
-        logger.debug("Game {} added to db: {}".format(game_data, control))
-        return control
+            "listdate": offer.listdate,
+            "price": offer.price,
+            "currency": offer.currency,
+            "condition": offer.condition,
+            "notes": offer.notes,
+            "link": offer.link}
+        return ORMWrapperBggGameMarketplace(db=self.db).create(data=marketplace_data)
 
     def __add_attributes(self, game: ThingModel) -> bool:
         error = False

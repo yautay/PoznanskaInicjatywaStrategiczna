@@ -38,7 +38,7 @@ class BggObjects(object):
             self._bgg_objects = []
 
     @property
-    def bgg_objects(self) -> List[BggObject]:
+    def bgg_objects(self) -> List[object]:
         return self._bgg_objects
 
     @bgg_objects.setter
@@ -50,7 +50,7 @@ class BggObjects(object):
 
     def to_string(self) -> List[dict]:
         objects = []
-        for v in self.bgg_objects:
+        for v in self._bgg_objects:
             print(v, type(v))
             objects.append(v.to_string())
         return objects
