@@ -6,3 +6,4 @@ test_db.db
 sql_app.db
 /.pytest_cache/
 /.coverage
+/logs/logs_common.log

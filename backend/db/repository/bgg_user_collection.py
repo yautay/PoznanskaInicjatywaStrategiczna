@@ -1,11 +1,11 @@
 import datetime
-import logging
+from logs.logger import Logger
 from schema import Schema, Or, Use, SchemaError
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from db.models.bgg_user_collection import BggUserCollection
 
-logger = logging.getLogger('ORMWrapperBggUserCollection')
+logger = Logger().logger
 
 
 class ORMWrapperBggUserCollection(object):

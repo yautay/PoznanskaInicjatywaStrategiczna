@@ -1,9 +1,9 @@
+from logs.logger import Logger
 from sqlalchemy.orm import Session
 from schema import Schema, Use, SchemaError
 from db.models.bgg_game_attribute import BggGameAttribute
-import logging
 
-logger = logging.getLogger('ORMWrapperBggGameAttributes')
+logger = Logger().logger
 
 
 class ORMWrapperBggGameAttribute(object):

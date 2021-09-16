@@ -1,3 +1,4 @@
+from logs.logger import Logger
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.models.pis_user import PisUser as User
@@ -6,11 +7,9 @@ from libs.client_interface import BggClientInterface
 from schemas.collections import CollectionCreate
 from db.repository.pis_users import retrieve_users_by_id
 from apis.version_1.route_login import get_current_user_from_token
-import logging
-
-logger = logging.getLogger('RouteBgg')
 
 
+logger = Logger().logger
 router = APIRouter()
 
 

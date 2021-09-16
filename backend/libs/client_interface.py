@@ -1,4 +1,4 @@
-import logging
+from logs.logger import Logger
 from datetime import datetime
 from typing import List
 from sqlalchemy.orm import Session
@@ -17,8 +17,7 @@ from db.models.bgg_game_attribute import BggGameAttribute
 from db.models.bgg_user_collection import BggUserCollection
 from db.models.bgg_attribute import BggAttribute
 
-
-logger = logging.getLogger("BggClientInterface")
+logger = Logger().logger
 
 
 class BggClientInterface(object):

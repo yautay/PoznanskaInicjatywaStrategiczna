@@ -1,15 +1,15 @@
 import json
-import logging
+from logs.logger import Logger
 from ..conftests import *
 from db.repository.bgg_game import ORMWrapperBggGame
 from db.repository.bgg_attribute import ORMWrapperBggAttribute
 from db.repository.bgg_game_attribute import ORMWrapperBggGameAttribute
 
-logger = logging.getLogger("TestsBgg")
+logger = Logger().logger
 
 
 def test_synchro_collection_by_user_normal(client, normal_user_token_headers):
-    data = {"bgg_user": "testxx"}
+    data = {"bgg_user": "testxy"}
     response = client.post("/bgg/collection", json.dumps(data), headers=normal_user_token_headers)
     logger.info(f"url: {response.url}, params: {response.json()}")
     assert response.status_code == 401

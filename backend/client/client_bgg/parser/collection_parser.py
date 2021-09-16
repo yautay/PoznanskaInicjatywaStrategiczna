@@ -1,10 +1,7 @@
-import logging
 from typing import List
 from client.client_bgg.parser.base_parser import Parser, ParserWrapper
 from client.client_bgg.models.collection import Collection
 from client.client_bgg.parser.item_keys import CollectionItemKeys as key
-
-logger = logging.getLogger("CollectionParser")
 
 
 class CollectionParser(Parser, ParserWrapper):
