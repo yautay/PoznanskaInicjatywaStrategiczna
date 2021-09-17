@@ -10,7 +10,7 @@ class ORMWrapperBggGame(object):
     def __init__(self, db: Session):
         self.db = db
 
-    def create(self, data: dict) -> bool:
+    def create(self, data: dict) -> int or bool:
         db = self.db
 
         def check_existing() -> BggGame or None:
@@ -42,7 +42,7 @@ class ORMWrapperBggGame(object):
             try:
                 existing.__init__(**data)
                 db.commit()
-                return True
+                return existing.id
             except:
                 logger.critical(f"BggGame not UPDATED to db. \n data: {data}")
                 logger.exception("msg")
@@ -52,7 +52,8 @@ class ORMWrapperBggGame(object):
                 game = BggGame(**data)
                 db.add(game)
                 db.commit()
-                return True
+                logger.debug(f"{game.to_json()} added to bgg_game")
+                return game.id
             except:
                 logger.critical(f"BggGame not ADDED to db. \n data: {data}")
                 logger.exception("msg")

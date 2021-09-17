@@ -41,12 +41,13 @@ class ORMWrapperBggGameMarketplace(object):
             return False
         existing = check_existing()
         if existing:
-            logger.warning("Offer: {} already exists in bgg_game_marketplace, added similar offer: {}"
+            logger.warning("Offer: {} already exists in bgg_game_marketplace -> {}"
                            .format(existing.to_json(), data))
         try:
             marketplace = BggGameMarketplace(**data)
             db.add(marketplace)
             db.commit()
+            logger.debug(f"{marketplace.to_json()} added to bgg_marketplace")
             return True
         except:
             logger.critical(f"BggGameMarketplace not ADDED to db. \n data: {data}")

@@ -10,7 +10,7 @@ from tests.utils.randoms import random_lower_string, random_date
 def create_test_users(db: Session, count=10) -> List[List]:
     users = []
     for user in range(count):
-        user = create_random_user(db=db)
+        user = create_user(db=db)
         _id = user.id
         login = user.login
         email = user.email
@@ -40,7 +40,7 @@ def assert_test_users(retrieved_users: List[PisUser] or PisUser, users: List[Pis
             assert retrieved_users.hashed_password == users.hashed_password
 
 
-def create_random_user(db: Session, data: dict = None) -> PisUser:
+def create_user(db: Session, data: dict = None) -> PisUser:
     if not data:
         data = create_random_user_data()
     user_schema = UserCreate(

@@ -50,6 +50,7 @@ class ORMWrapperBggAttribute(object):
                 attribute = BggAttribute(**data)
                 db.add(attribute)
                 db.commit()
+                logger.debug(f"{attribute.to_json()} added to bgg_attribute")
                 return attribute.id
             except:
                 logger.critical(f"BggAttributes not ADDED to db. \n data: {data}")

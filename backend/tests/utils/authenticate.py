@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from db.repository.pis_users import retrieve_users_by_email, set_superuser
 from tests.utils.randoms import random_lower_string
-from tests.utils.user import create_random_user_data, create_random_user
+from tests.utils.user import create_random_user_data, create_user
 from fastapi.testclient import TestClient
 
 
@@ -23,7 +23,7 @@ def authentication_token_from_email_superuser(client: TestClient, email: str, db
         new_user = create_random_user_data()
         new_user["email"] = email
         new_user["password"] = password
-        user = create_random_user(db=db, data=new_user)
+        user = create_user(db=db, data=new_user)
         set_superuser(user_id=user.id, db=db)
     return user_authentication_headers(client=client, email=email, password=password)
 
@@ -41,5 +41,5 @@ def authentication_token_from_email_common_user(client: TestClient, email: str, 
         new_user["email"] = email
         new_user["password"] = password
         new_user["bgg_user"] = bgg_user
-        user = create_random_user(db=db, data=new_user)
+        user = create_user(db=db, data=new_user)
     return user_authentication_headers(client=client, email=email, password=password)
