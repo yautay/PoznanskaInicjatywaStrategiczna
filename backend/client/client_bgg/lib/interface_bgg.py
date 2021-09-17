@@ -1,10 +1,10 @@
 import time
 import requests
-from logs.logger import Logger
+from logs import logger
 from client.client_bgg.queries import *
 from client.client_bgg.parser import *
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 class InterfaceBgg:

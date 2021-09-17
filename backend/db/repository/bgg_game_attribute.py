@@ -1,9 +1,11 @@
-from logs.logger import Logger
+from sqlalchemy import and_
+
+from logs import logger
 from sqlalchemy.orm import Session
 from schema import Schema, Use, SchemaError
 from db.models.bgg_game_attribute import BggGameAttribute
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 class ORMWrapperBggGameAttribute(object):
@@ -12,6 +14,10 @@ class ORMWrapperBggGameAttribute(object):
 
     def create(self, data: dict) -> bool:
         db = self.db
+
+        def check_existing() -> BggGameAttribute or None:
+            return db.query(BggGameAttribute)\
+                .filter_by(and_(BggGameAttribute.game_index == )).first()
 
         def check_schema():
             data_schema = Schema({

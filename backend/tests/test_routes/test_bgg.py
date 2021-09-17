@@ -1,11 +1,11 @@
 import json
-from logs.logger import Logger
+from logs import logger
 from ..conftests import *
 from db.repository.bgg_game import ORMWrapperBggGame
 from db.repository.bgg_attribute import ORMWrapperBggAttribute
 from db.repository.bgg_game_attribute import ORMWrapperBggGameAttribute
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 def test_synchro_collection_by_user_normal(client, normal_user_token_headers):

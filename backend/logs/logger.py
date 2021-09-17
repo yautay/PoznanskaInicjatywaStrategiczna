@@ -1,31 +1,29 @@
 import logging
-import os.path
-
-logs_file = "logs_common"
-cwd = os.path.abspath(os.getcwd())
-print(cwd)
+import sys
+import os
+from logging.handlers import TimedRotatingFileHandler
 
 
-class Logger(object):
-    def __init__(self, file: str = logs_file, suffix: str = "", logger_name: str = ""):
-        self.__log = os.path.join(cwd, "logs",  file + suffix + ".log")
-        print(self.__log)
-        self.__logger = logging.getLogger(logger_name)
-        self.__logger.setLevel(logging.INFO)
-        fh = logging.FileHandler(self.__log)
-        fh.setLevel(logging.INFO)
-        sh = logging.StreamHandler()
-        sh.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(funcName)s - %(pathname)s - %(lineno)d - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-        fh.setFormatter(formatter)
-        sh.setFormatter(formatter)
-        self.__logger.addHandler(fh)
-        self.__logger.addHandler(sh)
+FORMATTER = logging.Formatter("%(asctime)s - %(name)s - line:%(lineno)d - %(levelname)s -> %(message)s")
+LOG_FILE = cwd = os.path.join(os.path.abspath(os.getcwd()), "logs", "pis-common.log")
 
-    @property
-    def logger(self):
-        return self.__logger
 
-    @logger.setter
-    def logger(self, value):
-        self.__logger = value
+def get_console_handler():
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(FORMATTER)
+    return console_handler
+
+
+def get_file_handler():
+    file_handler = TimedRotatingFileHandler(LOG_FILE, when='midnight')
+    file_handler.setFormatter(FORMATTER)
+    return file_handler
+
+
+def get_logger(logger_name):
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(get_console_handler())
+    logger.addHandler(get_file_handler())
+    logger.propagate = False
+    return logger

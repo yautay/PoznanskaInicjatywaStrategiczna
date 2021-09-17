@@ -1,11 +1,11 @@
 import datetime
-from logs.logger import Logger
+from logs import logger
 from schema import Schema, Or, Use, SchemaError
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from db.models.bgg_user_collection import BggUserCollection
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 class ORMWrapperBggUserCollection(object):
@@ -22,19 +22,19 @@ class ORMWrapperBggUserCollection(object):
 
         def check_schema():
             data_schema = Schema({
-                "user_id": (Use(int)),
-                "game_index": (Use(int)),
-                "collection_own": Or(Use(int), None),
-                "collection_comment": Or(Use(str), None),
-                "collection_numplays": Or(Use(int), None),
-                "collection_fortrade": Or(Use(int), None),
-                "collection_preordered": Or(Use(int), None),
-                "collection_prevowned": Or(Use(int), None),
-                "collection_want": Or(Use(int), None),
-                "collection_wanttobuy": Or(Use(int), None),
-                "collection_wanttoplay": Or(Use(int), None),
-                "collection_wishlist": Or(Use(int), None),
-                "collection_lastmodified": Or(Use(str), None)})
+                "user_id": Use(int),
+                "game_index": Use(int),
+                "collection_own": Use(int),
+                "collection_comment": Use(str),
+                "collection_numplays": Use(int),
+                "collection_fortrade": Use(int),
+                "collection_preordered": Use(int),
+                "collection_prevowned": Use(int),
+                "collection_want": Use(int),
+                "collection_wanttobuy": Use(int),
+                "collection_wanttoplay": Use(int),
+                "collection_wishlist": Use(int),
+                "collection_lastmodified": Use(str)})
             try:
                 data_schema.validate(data)
                 data["collection_updated"] = datetime.datetime.now()

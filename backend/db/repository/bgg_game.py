@@ -1,9 +1,9 @@
-from logs.logger import Logger
+from logs import logger
 from schema import Schema, Use, SchemaError
 from sqlalchemy.orm import Session
 from db.models.bgg_game import BggGame
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 class ORMWrapperBggGame(object):
@@ -30,7 +30,7 @@ class ORMWrapperBggGame(object):
                 data_schema.validate(data)
                 return True
             except SchemaError:
-                logger.error(f'Schema validation error for {data}')
+                logger.error(f"Schema validation error for {data}")
                 logger.exception("msg")
                 return False
 
@@ -38,22 +38,23 @@ class ORMWrapperBggGame(object):
             return False
         existing = check_existing()
         if existing:
-            existing.__init__(**data)
+            logger.warning(f"Game exists in bgg_game: {existing.to_json()} updating with: {data}")
             try:
+                existing.__init__(**data)
                 db.commit()
                 return True
             except:
-                logger.critical(f"BggGame not UPDATED to db. \n instance: {existing.to_json()} \n data: {data}")
+                logger.critical(f"BggGame not UPDATED to db. \n data: {data}")
                 logger.exception("msg")
                 return False
         else:
-            game = BggGame(**data)
             try:
+                game = BggGame(**data)
                 db.add(game)
                 db.commit()
                 return True
             except:
-                logger.critical(f"BggGame not ADDED to db. \n instance: {game.to_json()} \n data: {data}")
+                logger.critical(f"BggGame not ADDED to db. \n data: {data}")
                 logger.exception("msg")
                 return False
 

@@ -1,20 +1,22 @@
-from logs.logger import Logger
+from logs import logger
+from sqlalchemy import and_
 from schema import Schema, Use, Or, SchemaError
 from sqlalchemy.orm import Session
 from db.models.bgg_attribute import BggAttribute
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 class ORMWrapperBggAttribute(object):
     def __init__(self, db: Session):
         self.db = db
 
-    def create(self, data: dict) -> bool:
+    def create(self, data: dict) -> int or bool:
         db = self.db
 
         def check_existing() -> BggAttribute or None:
-            return db.query(BggAttribute).filter(BggAttribute.attribute_bgg_index == data["attribute_bgg_index"]).first()
+            return db.query(BggAttribute)\
+                .filter_by(**data).first()
 
         def check_schema():
             data_schema = Schema({
@@ -33,22 +35,24 @@ class ORMWrapperBggAttribute(object):
             return False
         existing = check_existing()
         if existing:
-            existing.__init__(**data)
+            logger.warning("BggAttribute: {} already exists in bgg_attribute, updated with {}"
+                           .format(existing.to_json(), data))
             try:
+                existing.__init__(**data)
                 db.commit()
-                return True
+                return existing.id
             except:
-                logger.critical(f"BggAttributes not UPDATED to db. \n instance: {existing.to_json()} \n data: {data}")
+                logger.critical(f"BggAttributes not UPDATED to db. \n data: {data}")
                 logger.exception("msg")
                 return False
         else:
-            attribute = BggAttribute(**data)
             try:
+                attribute = BggAttribute(**data)
                 db.add(attribute)
                 db.commit()
-                return True
+                return attribute.id
             except:
-                logger.critical(f"BggAttributes not ADDED to db. \n instance: {attribute.to_json()} \n data: {data}")
+                logger.critical(f"BggAttributes not ADDED to db. \n data: {data}")
                 logger.exception("msg")
                 return False
 

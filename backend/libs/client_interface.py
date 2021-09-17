@@ -1,4 +1,4 @@
-from logs.logger import Logger
+from logs import logger
 from datetime import datetime
 from typing import List
 from sqlalchemy.orm import Session
@@ -13,13 +13,13 @@ from db.repository.bgg_game import ORMWrapperBggGame
 from db.repository.bgg_attribute import ORMWrapperBggAttribute
 from db.repository.bgg_user_collection import ORMWrapperBggUserCollection
 from db.repository.bgg_game_attribute import ORMWrapperBggGameAttribute
-# from db.repository.bgg_game_marketplace import ORMWrapperBggGameMarketplace
+from db.repository.bgg_game_marketplace import ORMWrapperBggGameMarketplace
 from db.models.bgg_game import BggGame
 from db.models.bgg_game_attribute import BggGameAttribute
 from db.models.bgg_user_collection import BggUserCollection
 from db.models.bgg_attribute import BggAttribute
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 
 
 class BggClientInterface(object):
@@ -70,66 +70,56 @@ class BggClientInterface(object):
         return control
 
     def __add_marketplace(self, game_obj: ThingModel or object) -> bool:
-        marketplace_obj = game_obj.marketplace.bgg_objects
-        for offer in marketplace_obj:
-            control = self.__add_offer(offer)
-            logger.debug("Marketplace offer {} added to db: {}".format(offer.to_string(), control))
+        def __add_offer(input_data: ThingMarketplace, game_index: int) -> bool:
+            marketplace_data = {
+                "game_index": game_index,
+                "offer_date": input_data.listdate,
+                "offer_price": input_data.price,
+                "offer_currency": input_data.currency,
+                "offer_condition": input_data.condition,
+                "offer_notes": input_data.notes,
+                "offer_bgg_link": input_data.link}
+            return ORMWrapperBggGameMarketplace(db=self.db).create(data=marketplace_data)
 
-    def __add_offer(self, offer: ThingMarketplace) -> bool:
-        marketplace_data = {
-            "listdate": offer.listdate,
-            "price": offer.price,
-            "currency": offer.currency,
-            "condition": offer.condition,
-            "notes": offer.notes,
-            "link": offer.link}
-        return ORMWrapperBggGameMarketplace(db=self.db).create(data=marketplace_data)
+        marketplace_obj = game_obj.marketplace.bgg_objects
+        success = True
+        for offer in marketplace_obj:
+            control = __add_offer(offer, game_obj.game_index)
+            if not control:
+                success = False
+            logger.debug("Marketplace offer {} added to db: {}".format(offer.to_string(), control))
+        return success
 
     def __add_attributes(self, game: ThingModel) -> bool:
-        error = False
-        for designer in game.designers.bgg_objects:
-            control = self.__add_attribute(designer)
-            if not control:
-                error = True
-            logger.debug("Designer {} added to db: {}".format(designer.to_string(), control))
-        for artist in game.artists.bgg_objects:
-            control = self.__add_attribute(artist)
-            if not control:
-                error = True
-            logger.debug("Artist {} added to db: {}".format(artist.to_string(), control))
-        for publisher in game.publishers.bgg_objects:
-            control = self.__add_attribute(publisher)
-            logger.debug("Publisher {} added to db: {}".format(publisher.to_string(), control))
-        for family in game.boardgame_family.bgg_objects:
-            control = self.__add_attribute(family)
-            if not control:
-                error = True
-            logger.debug("Family {} added to db: {}".format(family.to_string(), control))
-        for mechanic in game.boardgame_mechanics.bgg_objects:
-            control = self.__add_attribute(mechanic)
-            if not control:
-                error = True
-            logger.debug("Mechanic {} added to db: {}".format(mechanic.to_string(), control))
-        for category in game.boardgame_categories.bgg_objects:
-            control = self.__add_attribute(category)
-            if not control:
-                error = True
-            logger.debug("Category {} added to db: {}".format(category.to_string(), control))
-        for implementation in game.boardgame_implementations.bgg_objects:
-            control = self.__add_attribute(implementation)
-            if not control:
-                error = True
-            logger.debug("Implementation {} added to db: {}".format(implementation.to_string(), control))
-        for expansion in game.boardgame_expansions.bgg_objects:
-            control = self.__add_attribute(expansion)
-            if not control:
-                error = True
-            logger.debug("Expansion {} added to db: {}".format(expansion.to_string(), control))
-        return error
+        def __add_attribute(input_data: BggObject) -> bool:
+            prepeg = {
+                "attribute_bgg_index": input_data.bgg_index,
+                "attribute_bgg_value": input_data.name,
+                "attribute_bgg_json": None}
+            return ORMWrapperBggAttribute(db=self.db).create(data=prepeg)
 
-    def __add_attribute(self, attribute: BggObject) -> bool:
-        designer_data = {
-            "attribute_bgg_index": attribute.bgg_index,
-            "attribute_bgg_value": attribute.name,
-            "attribute_bgg_json": None}
-        return ORMWrapperBggAttribute(db=self.db).create(data=designer_data)
+        def __add_game_attributes(game: ThingModel, att_type: int, att_index: int) -> bool:
+            def __add_game_attribute(input_data: BggObject) -> bool:
+                prepeg = {
+                    "game_index": game.game_index,
+                    "attribute_type_index": att_type,
+                    "bgg_attribute": att_index}
+                return ORMWrapperBggGameAttribute(db=self.db).create(data=prepeg)
+
+        error = False
+        _objects = [game.designers.bgg_objects,
+                    game.artists.bgg_objects,
+                    game.publishers.bgg_objects,
+                    game.boardgame_family.bgg_objects,
+                    game.boardgame_mechanics.bgg_objects,
+                    game.boardgame_categories.bgg_objects,
+                    game.boardgame_implementations.bgg_objects,
+                    game.boardgame_expansions.bgg_objects]
+        for x in range(len(_objects)):
+            for _sub in _objects[x]:
+                att_id = __add_attribute(_sub)
+                control2 = __add_game_attributes(game, att_id, att_id)
+                if not att_id:
+                    error = True
+                logger.debug("{} added to bgg_attribute".format(_sub.to_string()))
+        return error

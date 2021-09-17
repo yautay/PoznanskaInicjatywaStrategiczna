@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Date, ForeignKey, String, JSON
+from sqlalchemy import Column, Integer, Date, String
 from sqlalchemy.orm import relationship
 from db.base_class import Base
 
@@ -6,14 +6,15 @@ from db.base_class import Base
 class BggGame(Base):
     id = Column(Integer, primary_key=True)
     game_index = Column(Integer, index=True)
-    game_name = Column(String(250))
+    game_name = Column(String(500))
     game_description = Column(String(10000))
     game_published = Column(Date)
-    game_thumbnails = Column(String(2000))
-    game_images = Column(String(2000))
+    game_thumbnails = Column(String(300))
+    game_images = Column(String(300))
     game_min_players = Column(Integer)
     game_max_players = Column(Integer)
     bgggameattributes = relationship("BggGameAttribute", back_populates="bgggame", uselist=False)
+    bgggamemarketplace  = relationship("BggGameMarketplace", back_populates="bgggame", uselist=False)
 
     def to_json(self):
         return {

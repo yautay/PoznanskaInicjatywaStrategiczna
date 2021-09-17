@@ -1,4 +1,4 @@
-from logs.logger import Logger
+from logs import logger
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.models.pis_user import PisUser as User
@@ -9,7 +9,7 @@ from db.repository.pis_users import retrieve_users_by_id
 from apis.version_1.route_login import get_current_user_from_token
 
 
-logger = Logger().logger
+logger = logger.get_logger(__name__)
 router = APIRouter()
 
 
